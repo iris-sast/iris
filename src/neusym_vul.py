@@ -457,13 +457,11 @@ class SAPipeline:
 
     def parse_json(self, json_str):
         try:
-            #print("try 1", json_str)
             import re
             json_str = json_str.replace("\\n", "").replace("\\\n", "")
             json_str = re.sub("//.*", "", json_str)
             json_str = re.sub("\"\"", "\"", json_str)
             json_str = re.findall("\[[\s\S]*\]", json_str)[0]
-            #json_str = re.sub(r"\\n", "", json_str)
             result = json.loads(json_str)
             if type(result) == list:
                 return result
@@ -505,7 +503,6 @@ class SAPipeline:
             self.project_logger.info(f"  ==> Querying GPT... #Candidates: {len(candidates)}, #To Query APIs: {len(to_query_candidates)}, #Cached: {num_cached_candidates}")
 
             # 3. Setup LLMs and relevant queries
-            #model = LLM.get_llm(model_name=self.llm, logger=self.project_logger, kwargs={"seed": self.seed, "max_new_tokens": 1024})
             system_prompt = API_LABELLING_SYSTEM_PROMPT
             cwe_description = QUERIES[self.query]["prompts"]["desc"]
             cwe_long_description = QUERIES[self.query]["prompts"]["long_desc"]
@@ -531,10 +528,6 @@ class SAPipeline:
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt},
                 ]
-
-                # 4.4. Parse the GPT result
-                #json_result = self.parse_json(result)
-                #return json_result
 
             # 5. Iterate through all batches and generate result
             args = range(0, len(to_query_candidates), self.label_api_batch_size)
@@ -687,14 +680,11 @@ class SAPipeline:
     def query_gpt_for_func_param_src(self):
         self.project_logger.info("==> Stage 4: Querying GPT for source function parameters...")
         if not os.path.exists(self.llm_labelled_source_func_params_path) or self.overwrite or self.overwrite_labelled_func_param:
-            # 1. Get LLM and fetch information used for prompt
+            # 1-2. Get LLM and fetch information used for prompt
             system_prompt = FUNC_PARAM_LABELLING_SYSTEM_PROMPT
             proj_description = self.fetch_project_description_from_readme()
             proj_username = self.project_name.split("_")[0]
             proj_name = self.project_name.split("_")[2]
-
-            # 2. Get LLM
-            #model = LLM.get_llm(model_name=self.llm, logger=self.project_logger, kwargs={"seed": self.seed, "max_new_tokens": 1024})
 
             # 3. Load the candidates
             candidates = self.fetch_func_param_src_candidates()

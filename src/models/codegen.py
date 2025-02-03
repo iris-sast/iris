@@ -25,6 +25,4 @@ class CodegenModel(LLM):
             prompt = f"Instruction: {system_prompt}\\n Input: \\n {user_prompt}\\n Output:\\n"
         else:
             prompt = f"Input: \\n {user_prompt}\\n Output:\\n"
-        #prompt = f"{user_prompt}"
-        #inputs = self.tokenizer(prompt, return_tensors="pt", add_special_tokens=False).to("cuda")
         return self.predict_main(prompt)

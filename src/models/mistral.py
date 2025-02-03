@@ -27,13 +27,10 @@ class MistralModel(LLM):
             newd = dict()
             newd["role"]="user"
             newd["content"]=d[0]['content'] + '\n'+ d[1]['content']
-            #print(d)
-            #print(newd)
             return [newd]
             
         if batch_size > 0:
             prompts = [self.pipe.tokenizer.apply_chat_template(rename(p), tokenize=False, add_generation_prompt=True) for p in main_prompt]
-            #print(prompts[0])
             self.model_hyperparams['temperature']=0.01
             return self.predict_main(prompts, batch_size=batch_size, no_progress_bar=no_progress_bar)
         else:
@@ -43,7 +40,6 @@ class MistralModel(LLM):
             add_generation_prompt=True
             )
             self.model_hyperparams['temperature']=0.01
-            #print(prompt)
             return self.predict_main(prompt, no_progress_bar=no_progress_bar) 
 
 if __name__ == '__main__':

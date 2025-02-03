@@ -90,7 +90,6 @@ def filter_common_indices(all_results_df):
         indices[ds] = set(all_results_df[dfs[0]][0].index)
         for d in dfs[1:]:
             indices[ds] = indices[ds].intersection(set(all_results_df[d][0].index))
-            #print(ds, d, len(indices[ds]))
     for d in all_results_df:
         df = all_results_df[d][0]
         all_results_df[d][0] = df[df.index.isin(list(indices[all_results_df[d][1]['Dataset']]))]
@@ -117,8 +116,6 @@ def process(main_dir, lang, models, prompts, datasets, from_cache=True):
             print("Loaded from cache")
             if len(df) == 0:
                 continue
-            #print(df.head())
-            #print(df.index)
         else:
             results = compute_results(d, from_cache)
             df=pd.DataFrame.from_dict(results, orient="index")
@@ -375,9 +372,7 @@ def plot_cwe_data(cwe_metrics):
 
             bar1 = ax.bar(index, all_cwe_acc, bar_width, color='#ffb55a' , alpha=1, label='Accuracy', edgecolor='black')
             bar2 = ax.bar(index+bar_width, all_cwe_f1, bar_width, color='#7eb0d5', alpha=1, label='F1', edgecolor='black')
-            #ax.set_xlabel(dataset_map[ds])
             ax.set_ylabel('')
-            #ax.set_title(f'GPT-4 CWE Metrics for {ds}')
             # set y limit to 0 1
             ax.set_ylim(0, 1)
             ax.set_xticks(index + bar_width / 2)
@@ -428,7 +423,6 @@ def plot_codeql_results(codeql_results_df, all_results_df):
             for model in [ 'gpt-4']:
                 print(model, ds, cwe)
                 model_df = [k for k in all_results_df.values() if k[1]["Model"] == model and k[1]["Dataset"] == ds and (k[1]['system_prompt_type'], k[1]['prompt_type']) == prompt ][0][0]
-                #model_df = all_results_df[model_df][0]
                 codeql_metrics = compute_precision_recall_accuracy(codeql_df[codeql_df['true_cwe'] == cwe], "true_label", "codeql_label")
                 model_metrics = compute_precision_recall_accuracy(model_df[model_df['true_cwe'] == cwe], "true_label", "llm_label")
                 entry = [f"{dataset_map[ds]}",  f"CWE-{cwe}",

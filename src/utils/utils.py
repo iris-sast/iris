@@ -48,10 +48,6 @@ def parse_llm_results(pred_text):
         "vulnerability\s*[:=]\s*(YES|NO|Y|N|NA|N/A)", pred_text, re.IGNORECASE
     )
     results["vulnerability"] = vul[0] if len(vul) > 0 else None
-    #if results['vulnerability'] is None:
-    #    print(pred_text)
-    #else:
-        #print("ok")
 
     vul_type = re.findall("type\s*[:=]\s*(CWE[-_]\d+|NA|N/A)", pred_text, flags=re.IGNORECASE)
     results["vulnerability type"] = vul_type[0] if len(vul_type) > 0 else None
@@ -101,7 +97,6 @@ def parse_llm_results_old(pred_text):
                 results[key] = r[1].strip()
             except:
                 print(pred_text)
-    # print(results)
     return results
 
 
@@ -127,7 +122,6 @@ def compute_prec_recall_multiclass(result: pd.DataFrame, label_col, pred_col):
         FP = ((~true_binary) & (predicted_binary)).sum()
         FN = ((true_binary) & (~predicted_binary)).sum()
         TN = ((~true_binary) & (~predicted_binary)).sum()
-        # print(label, TP, FP, FN, TN)
         # Calculate Precision and Recall
         precision = (TP / (TP + FP)) if (TP + FP) > 0 else 0
         recall = (TP / (TP + FN)) if (TP + FN) > 0 else 0
@@ -179,7 +173,6 @@ def cwe_in_predicted_name(cwenames: pd.DataFrame, cwe, name):
         if n in name.lower():
             return True
     return False
-    # cwenames.loc[int(cwe)]['name'].lower() in str(llm_results['vulnerability name']).lower()
 
 
 def compute_results(output_folder, use_cache=True):
@@ -197,7 +190,6 @@ def compute_results(output_folder, use_cache=True):
                 if use_cache and os.path.exists(result_file) and os.path.getsize(result_file) > 0 and os.path.getmtime(result_file) >= os.path.getmtime(os.path.join(output_folder, k, "pred.txt")):
                     cur_result = json.load(open(result_file))
                 else:
-                    #print("Computing results for ", output_folder, k)
                     true_label = (
                         open(os.path.join(output_folder, k, "label.txt")).read().strip()
                     )
@@ -205,7 +197,6 @@ def compute_results(output_folder, use_cache=True):
                     time_taken = open(os.path.join(output_folder, k, "time.txt")).read().strip()
 
                     llm_pred = open(os.path.join(output_folder, k, "pred.txt")).read().strip()
-                    # print(os.path.join(output_folder, k, "pred.txt"))
                     try:
                         llm_results = parse_llm_results(llm_pred)                
                         cur_result["true_label"] = is_true(true_label)
@@ -223,8 +214,6 @@ def compute_results(output_folder, use_cache=True):
                             cur_result["llm_cwe"] = llm_results["vulnerability type"]
                             cur_result["cwe_correct"] = False
 
-                        # print(cur_result['llm_cwe'], cwe)
-                        # cur_result['cwe_correct'] =  cur_result['llm_cwe'] == cwe
                         cur_result["explanation"] = llm_results["explanation"]
                         cur_result["loc"] = llm_results["lines of code"]
                         cur_result["time"] = time_taken

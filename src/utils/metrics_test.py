@@ -89,7 +89,6 @@ def get_results_from_folder(output_folder, logger=None):
     else:
         _log = _log
     df = pd.DataFrame.from_dict(results, orient="index")
-    # df.to_csv(os.path.join(output_folder, "results.csv"))
 
     prec_recall = compute_precision_recall_accuracy(df, "true_label", "llm_label")
     # print results
@@ -127,7 +126,6 @@ def get_results_from_folder(output_folder, logger=None):
 
 
 if __name__ == "__main__":
-    # get_results_from_folder(sys.argv[1])
     argparse = argparse.ArgumentParser()
     argparse.add_argument("--results_dir", type=str, default="Path to results directory")
     argparse.add_argument("--group_by", type=str, default=None, help="Column in the dataset to be used for grouping results (default: None)")

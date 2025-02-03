@@ -99,10 +99,6 @@ def evaluate(intersection):
     array[kind_id[codeql_label]][kind_id[llm_label]] += 1
     results[kind_id[codeql_label]][kind_id[llm_label]].append(sig)
 
-  print(array[0])
-  print(array[1])
-  print(array[2])
-
   total = sum([sum(row) for row in array])
   diagonal = sum([array[i][i] for i in range(3)])
   accuracy = diagonal / total

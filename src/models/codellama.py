@@ -44,23 +44,7 @@ class CodeLlamaModel(LLM):
                 print(">Setting max tokens to ", 2048)
                 self.model_hyperparams['max_new_tokens']=2048
             self.model_hyperparams['temperature']=0.01
-            #print(prompt)
             return self.predict_main(prompt, no_progress_bar=no_progress_bar)
-
-
-        # assuming 0 is system and 1 is user
-        system_prompt = main_prompt[0]['content']
-        user_prompt = main_prompt[1]['content']
-        prompt = f"<s>[INST] <<SYS>>\\n{system_prompt}\\n<</SYS>>\\n\\n{user_prompt}[/INST]"
-        l=len(self.tokenizer.tokenize(prompt))
-        self.log("Prompt length:" +str(l))
-        limit=16000 if self.kwargs["max_input_tokens"] is None else self.kwargs["max_input_tokens"]
-        if l > limit:
-            return prompt, "Too long, skipping: "+str(l)
-        if 'dataflow' in self.kwargs['system_prompt_type']:
-            print(">Setting max tokens to ", 1024)
-            self.model_hyperparams['max_new_tokens']=1024
-        return self.predict_main(prompt)
 
 if __name__ == '__main__':
     system="You are a security researcher, expert in detecting vulnerabilities. Provide response in following format: 'vulnerability: <YES/NO> | vulnerability type: <CWE_ID> | lines of code: <VULNERABLE_LINES_OF_CODE>"

@@ -425,13 +425,11 @@ class SAPipeline:
 
     def parse_json(self, json_str):
         try:
-            #print("try 1", json_str)
             import re
             json_str = json_str.replace("\\n", "").replace("\\\n", "")
             json_str = re.sub("//.*", "", json_str)
             json_str = re.sub("\"\"", "\"", json_str)
             json_str = re.findall("\[[\s\S]*\]", json_str)[0]
-            #json_str = re.sub(r"\\n", "", json_str)
             result = json.loads(json_str)
             if type(result) == list:
                 return result
@@ -499,10 +497,6 @@ class SAPipeline:
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt},
                 ]
-
-                # 4.4. Parse the GPT result
-                #json_result = self.parse_json(result)
-                #return json_result
 
             # 5. Iterate through all batches and generate result
             args = range(0, len(to_query_candidates), self.label_api_batch_size)

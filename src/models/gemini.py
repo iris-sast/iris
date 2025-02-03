@@ -28,7 +28,6 @@ class GeminiModel(LLM):
         self.logprobs = None
         for k in _GEMINI_DEFAULT_PARAMS:
             if k in kwargs:
-                #print(f"Setting {k}:{kwargs[k]}")
                 _GEMINI_DEFAULT_PARAMS[k] = kwargs[k]
         genai.GenerationConfig(max_output_tokens=_GEMINI_DEFAULT_PARAMS["max_tokens"],
                                temperature=_GEMINI_DEFAULT_PARAMS["temperature"],
@@ -50,14 +49,11 @@ class GeminiModel(LLM):
     def _predict(self, main_prompt):
         # assuming 0 is system and 1 is user
         # https://www.googlecloudcommunity.com/gc/AI-ML/Gemini-Pro-Context-Option/m-p/684704/highlight/true#M4159
-        # There is no direct way for 
         history = [{"role": "user", "parts": [{"text": f"System prompt: {main_prompt[0]['content']}"}],},
                    {"role": "model", "parts": [{"text": "Understood."}],},
                    {"role": "user", "parts": [{"text": f"{main_prompt[1]['content']}"}],}]
-        #print(_GEMINI_DEFAULT_PARAMS)
         response = self.client.generate_content(history)
         response = response.text
-        #print(response)
         return response
     
 if __name__ == '__main__':

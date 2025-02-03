@@ -24,8 +24,6 @@ class OpenAIModel:
         else:
             openai.api_key = os.getenv("OPENAI_API_KEY")
 
-        #print(openai.api_key)
-
     def call_openai(self, prompt, n_tries=5):
         while n_tries > 0:
             try:

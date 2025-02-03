@@ -29,13 +29,10 @@ class GoogleModel(LLM):
             newd = dict()
             newd["role"]="user"
             newd["content"]=d[0]['content'] + '\n'+ d[1]['content']
-            #print(d)
-            #print(newd)
             return [newd]
             
         if batch_size > 0:
             prompts = [self.pipe.tokenizer.apply_chat_template(rename(p), tokenize=False, add_generation_prompt=True) for p in main_prompt]
-            #print(prompts[0])
             self.model_hyperparams['temperature']=0.0
             return self.predict_main(prompts, batch_size=batch_size, no_progress_bar=no_progress_bar)
         else:
@@ -45,7 +42,6 @@ class GoogleModel(LLM):
             add_generation_prompt=True
             )
             self.model_hyperparams['temperature']=0.01
-            #print(prompt)
             return self.predict_main(prompt, no_progress_bar=no_progress_bar)
         # assuming 0 is system and 1 is user
         system_prompt = main_prompt[0]['content']
@@ -69,7 +65,6 @@ if __name__ == '__main__':
     cvefixes=CVEFixes("cvefixes-c-cpp-method", logger=None).df
     #id, row = bigvul.get_next()
     row=cvefixes.iloc[0]['code']
-    print(row)
     gemma_model = GoogleModel("gemma-7b-it", logger=None, max_input_tokens=1024, flash=False, system_prompt_type='')
     print(">>>Running Gemma")
     print(">>>ID:", str(id))
