@@ -376,13 +376,13 @@ url={https://arxiv.org/abs/2405.17238}
 
 IRIS is a collaborative effort between researchers at the University of Pennsylvania and Cornell University. Please reach out to us if you have questions about IRIS.
 
-[Ziyang Li](mailto:liby99@seas.upenn.edu)
+[Ziyang Li](https://liby99.github.io)
 
-[Claire Wang](mailto:cdwang@seas.upenn.edu)
+[Claire Wang](https://clairewang.net)
 
-[Saikat Dutta](mailto:saikatd@cornell.edu)
+[Saikat Dutta](https://www.cs.cornell.edu/~saikatd)
 
-[Mayur Naik](mailto:mhnaik@seas.upenn.edu)
+[Mayur Naik](https://www.cis.upenn.edu/~mhnaik)
 
 <img src="https://github.com/user-attachments/assets/37969a67-a3fd-4b4f-9be4-dfeed28d2b48" width="175" height="175" alt="Cornell University" />
 
