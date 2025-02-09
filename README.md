@@ -4,14 +4,13 @@ IRIS is a neurosymbolic framework that combines LLMs with static analysis for se
 - [Workflow](#workflow)
 - [Dataset](#dataset)
 - [Environment Setup](#environment-setup)
-  - [Linux Setup](#environment-setup-linux)
-  - [Docker Setup](#environment-setup-docker)
 - [Quickstart](#quickstart)
 - [Supported CWEs](#supported-cwes)
 - [Supported Models](#supported-models)
 - [Adding a CWE](#adding-a-cwe)
 - [Contributing](#contributing-and-feedback)
 - [Citation](#citation)
+- [Team](#team)
 
 ## Workflow
 
@@ -232,7 +231,7 @@ After this, proceed to step 2 on fetching and building Java projects.
 
 ## Environment Setup Other
 
-**Mac**: If you have a Mac, you can also run IRIS. You must separately install java libraries using the dmg files provided by oracle (using the same links mentioned [here](#get-the-jdks-needed)). Please specify the appropriate Java directories in `data/cwe-bench-java/scripts/jdk_version.json`. 
+**Mac**: If you have a Mac, you can also run IRIS. You must separately install java libraries using the dmg files provided by oracle (using the same links mentioned [here](#get-the-jdks-needed)). Please specify the appropriate Java directories in `data/cwe-bench-java/scripts/jdk_version.json`. Alternatively, you can use the provided dockerfile for setup.
 
 **Windows**: We have not evaluated IRIS on windows machines. If you are interested in extending IRIS's support to windows machines, please feel free to raise a PR.
 
@@ -372,3 +371,23 @@ url={https://arxiv.org/abs/2405.17238}
 }
 ```
 [Arxiv Link](https://arxiv.org/abs/2405.17238)
+
+## Team
+
+IRIS is a collaborative effort between researchers at the University of Pennsylvania and Cornell University. Please reach out to us if you have questions about IRIS.
+
+[Ziyang Li](mailto:liby99@seas.upenn.edu)
+
+[Claire Wang](mailto:cdwang57@seas.upenn.edu)
+
+[Saikat Dutta](mailto:saikatd@cornell.edu)
+
+[Mayur Naik](mailto:mhnaik@seas.upenn.edu)
+
+<img src="https://github.com/user-attachments/assets/37969a67-a3fd-4b4f-9be4-dfeed28d2b48" width="200" height="200" alt="Cornell University" />
+<img src="https://github.com/user-attachments/assets/362abdfb-4ca4-46b2-b003-b185ce4d20af" width="300" height="200" alt="University of Pennsylvania"/>
+
+
+
+
+
