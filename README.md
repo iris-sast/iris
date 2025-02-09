@@ -378,13 +378,14 @@ IRIS is a collaborative effort between researchers at the University of Pennsylv
 
 [Ziyang Li](mailto:liby99@seas.upenn.edu)
 
-[Claire Wang](mailto:cdwang57@seas.upenn.edu)
+[Claire Wang](mailto:cdwang@seas.upenn.edu)
 
 [Saikat Dutta](mailto:saikatd@cornell.edu)
 
 [Mayur Naik](mailto:mhnaik@seas.upenn.edu)
 
-<img src="https://github.com/user-attachments/assets/37969a67-a3fd-4b4f-9be4-dfeed28d2b48" width="200" height="200" alt="Cornell University" />
+<img src="https://github.com/user-attachments/assets/37969a67-a3fd-4b4f-9be4-dfeed28d2b48" width="175" height="175" alt="Cornell University" />
+
 <img src="https://github.com/user-attachments/assets/362abdfb-4ca4-46b2-b003-b185ce4d20af" width="300" height="200" alt="University of Pennsylvania"/>
 
 
