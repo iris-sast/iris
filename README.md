@@ -112,6 +112,9 @@ $ python3 scripts/build_codeql_dbs.py --project perwendel__spark_CVE-2018-9159_2
 ### Step 4. Check IRIS directory configuration in `src/config.py`
 By running the provided scripts, you won't have to modify `src/config.py`. Double check that the paths in the configuration are correct. Each path variable has a comment explaining its purpose.
 
+</details>
+
+
 ## Quickstart
 Make sure you have followed all of the environment setup instructions before proceeding! 
 
@@ -129,7 +132,7 @@ The following is an example of using IRIS to analyze zerotunaround for vulnerabi
 ```bash
 $ python3 src/neusym_vul.py --query cwe-022wLLM --run-id <SOME_ID> --llm gpt-4 zeroturnaround__zt-zip_CVE-2018-1002201_1.12
 ```
-</details>
+
 
 ### Outputs
 
@@ -191,6 +194,24 @@ output
 ```
 
 </details>
+
+### Running IRIS on a new Java project
+
+The easiest way to run IRIS on a Java project not in CWE-Bench-Java is to make the following changes:
+
+1. Add the project info to `data/cwe-bench-java/data/project_info.csv`. For instance, to run the latest perwendel/spark version:
+
+```
+ID,perwendel__spark_latest,,CWE-022,,perwendel,spark,latest,,,,
+```
+
+The only required fields are: project slug (use a unique name), cwe_id, github username, and github tag if any.
+
+2. Clone the project to `data/cwe-bench-java/project-sources`. Use the same folder name as the slug used above.
+3. Add build info to `data/cwe-bench-java/data/build_info.csv`. For instance, you can add: `perwendel__spark_latest,success,8u202,3.5.0,n/a,n/a` to use java 8 and mvn 3.5.0. Please use appropriate java/mvn/gradle versions as needed.
+4. Follow the steps 3, 4, and quickstart steps in the installation section.
+
+
 
 
 
