@@ -209,7 +209,10 @@ The only required fields are: project slug (use a unique name), cwe_id, github u
 
 2. Clone the project to `data/cwe-bench-java/project-sources`. Use the same folder name as the slug used above.
 3. Add build info to `data/cwe-bench-java/data/build_info.csv`. For instance, you can add: `perwendel__spark_latest,success,8u202,3.5.0,n/a,n/a` to use java 8 and mvn 3.5.0. Please use appropriate java/mvn/gradle versions as needed.
-4. Provide a list of internal packages in `data/cwe-bench-java/package-names/[slug].txt`. This should contain the package names of all internal packages of the project. E.g., `spark` for `perwendel/spark`.
+4. Provide a list of internal packages in `data/cwe-bench-java/package-names/[slug].txt`. This should contain the package names of all internal packages of the project. E.g., `spark` for `perwendel/spark`. You can use `scripts/find_java_packages.py`. Given the project source directory name, it write a list of the internal packages to a `data/cwe-bench-java/package-names/[slug].txt`.
+```
+python3 scripts/find_java_packages.py [project-slug] 
+```  
 5. Follow the steps 3, 4, and quickstart steps in the installation section.
 
 
