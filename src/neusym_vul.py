@@ -152,9 +152,12 @@ class SAPipeline:
 
         # Load some basic information, such as commits and fixes related to the CVE
         self.project_source_code_dir = f"{PROJECT_SOURCE_CODE_DIR}/{self.project_name}"
-        self.all_cves_with_commit = pd.read_csv(CVES_MAPPED_W_COMMITS_DIR)
-        self.project_cve_with_commit_info = self.all_cves_with_commit[self.all_cves_with_commit["cve_id"] == self.cve_id].iloc[0]
-        self.cve_fixing_commits = self.project_cve_with_commit_info["fix_commit_ids"].split(";")
+        if self.cve_id is not None and self.cve_id.startswith("CVE-"):
+            self.all_cves_with_commit = pd.read_csv(CVES_MAPPED_W_COMMITS_DIR)
+            self.project_cve_with_commit_info = self.all_cves_with_commit[self.all_cves_with_commit["cve_id"] == self.cve_id].iloc[0]
+            self.cve_fixing_commits = self.project_cve_with_commit_info["fix_commit_ids"].split(";")
+        else:
+            self.cve_fixing_commits = []
         self.fixed_methods = pd.read_csv(ALL_METHOD_INFO_DIR)
         self.project_fixed_methods = self.fixed_methods[self.fixed_methods["project_slug"] == self.project_name]
         self.project_fixed_modules = self.project_fixed_methods[
