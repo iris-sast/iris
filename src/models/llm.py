@@ -32,6 +32,9 @@ class LLM:
         # nothing else needed if calling gpt
         if model_name.lower().startswith("gpt"):
             return
+        # nothing else needed if calling ollama api
+        elif model_name.lower().startswith("ollama"):
+            return
         # nothing else needed if calling together AI
         elif "-tai" in model_name.lower():
             return
@@ -231,6 +234,9 @@ class LLM:
         elif model_name.lower().startswith("gpt"):
             from models.gpt import GPTModel
             model=GPTModel(model_name=model_name, logger=logger, **kwargs)
+        elif model_name.lower().startswith("ollama"):
+            from models.ollama import OllamaModel
+            model = OllamaModel(model_name=model_name, logger=logger, **kwargs)
         elif model_name.lower().startswith("gemma"):
             from models.google import GoogleModel
             model=GoogleModel(model_name=model_name, logger=logger, **kwargs)
