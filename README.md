@@ -375,6 +375,16 @@ We support the following models with our models API wrapper (found in `src/model
 - `wizardlm-13b`
 - `wizardlm-30b`
 
+### Ollama
+
+You need to install the `ollama` package manually.
+
+- `qwen2.5-coder:latest`
+- `qwen2.5:32b`
+- `llama3.2:latest`
+- `deepseek-r1:32b`
+- `deepseek-r1:latest`
+
 </details>
 
 ## Adding a CWE
