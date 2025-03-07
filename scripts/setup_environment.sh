@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# IMPORTANT: This script is designed to be executed from the 'iris-dev' root directory.
+# To run: ./scripts/setup_environment.sh
+
 # Exit on error
 set -e
 
@@ -26,7 +29,7 @@ conda env create -f environment.yml
 
 # Create necessary directories
 echo "Creating directories..."
-PROJECT_ROOT=$(cd ".." && pwd)
+PROJECT_ROOT=$(pwd)
 CODEQL_DIR="$PROJECT_ROOT/codeql"
 mkdir -p "$CODEQL_DIR"
 mkdir -p "$PROJECT_ROOT/data/codeql-dbs"
@@ -40,12 +43,18 @@ if ! curl -L -o "$CODEQL_ZIP" "$CODEQL_URL"; then
 fi
 
 echo "Extracting CodeQL..."
-if ! unzip -qo "$CODEQL_ZIP" -d "$CODEQL_DIR"; then
+TEMP_DIR="$PROJECT_ROOT/temp_codeql_extract"
+mkdir -p "$TEMP_DIR"
+
+if ! unzip -qo "$CODEQL_ZIP" -d "$TEMP_DIR"; then
     echo "Error: Failed to extract CodeQL"
     rm -f "$CODEQL_ZIP"
+    rm -rf "$TEMP_DIR"
     exit 1
 fi
 
+mv "$TEMP_DIR/codeql"/* "$CODEQL_DIR"
+rm -rf "$TEMP_DIR"
 rm -f "$CODEQL_ZIP"
 
 CODEQL_BIN="$CODEQL_DIR/codeql"

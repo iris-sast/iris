@@ -49,6 +49,7 @@ Run `scripts/setup_environment.sh`.
 ```bash
 $ chmod +x scripts/setup_environment.sh
 $ bash ./scripts/setup_environment.sh
+$ source ~/.bashrc # make sure to source .bashrc for PATH update
 ```
 This will do the following:
 - creates a conda environment specified by environment.yml
@@ -108,6 +109,11 @@ $ python3 scripts/build_codeql_dbs.py
 # build a specific CodeQL database given the project slug
 $ python3 scripts/build_codeql_dbs.py --project perwendel__spark_CVE-2018-9159_2.7.1 
 ```
+Note - if the script fails due to trying to locate CodeQL, run the following to find the path:
+```bash
+$ which codeql
+```
+Then update `CODEQL_DIR` in `src/config.py`. 
 
 ### Step 4. Check IRIS directory configuration in `src/config.py`
 By running the provided scripts, you won't have to modify `src/config.py`. Double check that the paths in the configuration are correct. Each path variable has a comment explaining its purpose.
@@ -429,8 +435,3 @@ IRIS is a collaborative effort between researchers at the University of Pennsylv
 <img src="https://github.com/user-attachments/assets/37969a67-a3fd-4b4f-9be4-dfeed28d2b48" width="175" height="175" alt="Cornell University" />
 
 <img src="https://github.com/user-attachments/assets/362abdfb-4ca4-46b2-b003-b185ce4d20af" width="300" height="200" alt="University of Pennsylvania"/>
-
-
-
-
-
