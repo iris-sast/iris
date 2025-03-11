@@ -1,3 +1,40 @@
+"""
+ Use the following format when adding a key to the QUERIES dictionary:
+   "query_name": {
+     "name": "",
+     "type": "cwe-query",
+     "cwe_id": "CWE-[CWE number]", - add 0 in front of double digit CWEs. 
+     "cwe_id_short": "[CWE number]", - short version of the CWE number. Remove 0 in front of double digit CWEs.
+     "cwe_id_tag": "CWE-[CWE number]", - cwe_id but without the 0 in front of double digit CWEs.
+     "type": "cwe-query",
+     "desc": "", - short description of the CWE
+     "queries": [
+       "cwe-queries/cwe-[CWE number]/cwe-[CWE number]wLLM.ql", - path to query file
+       "cwe-queries/cwe-[CWE number]/*.qll" - path to  *.qll files used.
+     ],
+     "prompts": {
+       "cwe-id": "CWE-[CWE number]" - same cwe_id as above,
+       "desc": "", - same short description as above
+       "long_desc": \, - long description of the CWE which includes definition and attack pattern. 
+       "examples": [ - list of examples of source, sink, and taint-propagator methods.
+         {
+           "package": "",
+           "class": "",
+           "method": "",
+           "signature": "",
+             "sink_args": [], - name of parameter variable in the signature above 
+           "type": "sink",
+         },
+         {
+           "package": "",
+           "class": "",
+           "method": "",
+           "signature": "",
+           "type": "source",
+         }
+       ]
+     },
+ """
 QUERIES = {
   "cwe-022wLLM": {
     "name": "cwe-022wLLM",
