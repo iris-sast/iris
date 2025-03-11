@@ -7,7 +7,7 @@ IRIS is a neurosymbolic framework that combines LLMs with static analysis for se
 - [Quickstart](#quickstart)
 - [Supported CWEs](#supported-cwes)
 - [Supported Models](#supported-models)
-- [Adding a CWE](#adding-a-cwe)
+- [Adding CWEs](docs/adding_cwes.md)
 - [Contributing](#contributing-and-feedback)
 - [Citation](#citation)
 - [Team](#team)
@@ -393,8 +393,8 @@ You need to install the `ollama` package manually.
 
 </details>
 
-## Adding a CWE
-Coming soon! 
+## [Adding CWEs](docs/adding_cwes.md)
+We're always open to contributions of CWE we don't currently support. Refer to our [list of currently supported CWEs](#supported-cwes) to figure out what CWE can be added.  
 
 ## Contributing and Feedback
 Feel free to address any open issues or add your own issue and fix. We love feedback! Please adhere to the following guidelines. 
