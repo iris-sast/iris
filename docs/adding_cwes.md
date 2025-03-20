@@ -49,7 +49,7 @@ Also add the following imports:
 
 Remove the former predicate definitions and anything else in the file related to the former predicates. Now in the `.ql` file, update the imports to refer to the renamed `.qll` module.
 
-5. Now within the `queries.py` file, add the CWE and its queries to the `QUERIES` dictionary. Note - if the CWE is double digits - for the id use 0[number]. For example - CWE 22 would be `cwe-022`. Use the following format - we use CWE-22 as an example:
+5. Now within the [`queries.py`](../src/queries.py) file, add the CWE and its queries to the `QUERIES` dictionary. Note - if the CWE is double digits - for the id use 0[number]. For example - CWE 22 would be `cwe-022`. Use the following format - we use CWE-22 as an example:
 ```
 "cwe-[number]wLLM": {
     "name": "cwe-[number]wLLM",
@@ -116,4 +116,6 @@ For the `long_desc` key - look up definitions of the CWE and find a clear descri
 
 For the examples, you will need to provide sources and sinks. A CodeQL source is a value that an attacker can use for malicious operations within a system. A CodeQL sink is a program point that accepts a malicious source, and ends up using the malicious data. You can use the [Github Advisory Database](https://github.com/advisories) to find examples of the CWE. Or the definition may provide common abstractions which you can then search for Java's most used libraries for the related abstraction. 
 
-6. After adding to the `queries.py` file - test out the query. You can provide the --test-run parameter when running `neusym_vul.py` to see if the CodeQL queries compile. Afterwards, you can try a test run with a small model on one of the Java projects. 
+6. Add a hint related to CWE for contextual analysis prompt in [`prompts.py`](../src/prompts.py). Hints are stored in `POSTHOC_FILTER_HINTS`. The key should be the CWE number and the value include sentences that describe extra details to look out for when detecting the CWE. Sites that have definitions for the CWE will often have more specific guidance on the CWE.
+
+6. Test out the query. You can provide the --test-run parameter when running `neusym_vul.py` to see if the CodeQL queries compile. Afterwards, you can try a test run with a small model on one of the Java projects associated with the CWE. The [GitHub Advisory Database](https://github.com/advisories) is an easy way to find a vulnerable project given the CWE.

@@ -122,7 +122,8 @@ Sink ({sink_msg}):
 
 {context}\
 """
-
+# The key should be the CWE number without any string prefixes. 
+# The value should be sentences describing more specific details for detecting the CWE. 
 POSTHOC_FILTER_HINTS = {
     "022": "Note: please be careful about defensing against absolute paths and \"..\" paths. Just canonicalizing paths might not be sufficient for the defense.",
     "078": "Note that other than typical Runtime.exec which is directly executing command, using Java Reflection to create dynamic objects with unsanitized inputs might also cause OS Command injection vulnerability. This includes deserializing objects from untrusted strings and similar functionalities. Writing to config files about library data may also induce unwanted execution of OS commands.",
