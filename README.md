@@ -223,7 +223,7 @@ $ python3 data/cwe-bench-java/scripts/setup.py --filter [project slug]
 ```bash
 $ python3 scripts/build_codeql_dbs.py --project [project slug]
 ```
-6. Provide a list of internal packages in `data/cwe-bench-java/package-names/[slug].txt`. This should contain the package names of all internal packages of the project. E.g., `spark` for `perwendel/spark`. The following command uses CodeQL to extract the internal packages and writes them to the required txt file in the `package-names` directory. We provided a script to automate this. 
+6. Provide a list of internal packages in `data/cwe-bench-java/package-names/[project slug].txt`. This should contain the package names of all internal packages of the project. E.g., `spark` for `perwendel/spark`. The following command uses CodeQL to extract the internal packages and writes them to the required txt file in the `package-names` directory. We provided a script to automate this. 
 ```bash
 $ python scripts/get_packages_codeql.py [project slug]
 ```
