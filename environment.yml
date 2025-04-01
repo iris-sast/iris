@@ -1,7 +1,7 @@
 name: iris
 channels:
-  - https://repo.anaconda.com/pkgs/main
-  - https://repo.anaconda.com/pkgs/r
+  - pytorch
+  - nvidia
   - conda-forge
 dependencies:
   - python=3.10
@@ -11,3 +11,5 @@ dependencies:
   - openai
   - accelerate
   - transformers
+  - pytorch=2.5
+  - pytorch-cuda=12.1

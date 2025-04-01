@@ -233,7 +233,7 @@ $ python scripts/get_packages_codeql.py [project slug]
 
 
 ## Environment Setup Docker
-The dockerfile has scripts that will create the conda environment, clones `cwe-bench-java`, and installs the patched CodeQL version. Before building the dockerfile you will need download the JDK versions needed. Then the dockerfile copies them to the container. 
+Clone iris. The dockerfile has scripts that will create the conda environment, clones `cwe-bench-java`, and installs the patched CodeQL version. Before building the dockerfile you will need download the JDK versions needed. Then the dockerfile copies them to the container. 
 
 ### Get the JDKs needed 
 For building, we need Java distributions as well as Maven and Gradle for package management. In addition, please prepare 3 versions of JDK and **put them in the iris root directory**. Oracle requires an account to download the JDKs, and we are unable to provide an automated script. Download from the following URLs:
@@ -242,7 +242,7 @@ JDK 7u80: https://www.oracle.com/java/technologies/javase/javase7-archive-downlo
 
 JDK 8u202: https://www.oracle.com/java/technologies/javase/javase8-archive-downloads.html
 
-JDK 17: https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html
+JDK 17: https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html (Make sure to download specifically JDK 17, not 17.X.X)
 
 At this point, your `iris` directory should look like 
 ```
