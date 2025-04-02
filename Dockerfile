@@ -46,7 +46,5 @@ RUN cd /iris/data/cwe-bench-java/java-env/ && \
     tar xzf jdk-17_linux-x64_bin.tar.gz --no-same-owner && \
     chmod -R 755 */bin */lib && \
     chmod -R 755 */jre/bin */jre/lib && \
-    rm *.tar.gz && \
     ls -la jdk-17/lib/libjli.so  # Verify the library exists and permissions
-RUN rm -rf /iris/*.tar.gz
 CMD ["/bin/bash"]

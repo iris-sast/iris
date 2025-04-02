@@ -57,9 +57,8 @@ mv "$TEMP_DIR/codeql"/* "$CODEQL_DIR"
 rm -rf "$TEMP_DIR"
 rm -f "$CODEQL_ZIP"
 
-CODEQL_BIN="$CODEQL_DIR/codeql"
-echo "export PATH=\"$CODEQL_BIN:$PATH\"" >> ~/.bashrc
-export PATH="$CODEQL_BIN:$PATH"
+echo "export PATH=\"$CODEQL_DIR:$PATH\"" >> ~/.bashrc
+export PATH="$CODEQL_DIR:$PATH"
 
 echo "Setup completed successfully!"
 echo "- Conda environment 'iris' has been created"
