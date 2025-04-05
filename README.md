@@ -32,11 +32,11 @@ We have curated a dataset of Java projects, containing 120 real-world previously
 ## Environment Setup
 
 We support multiple ways to run IRIS:
-- [Linux Setup](#environment-setup-linux)
-- [Docker Setup](#environment-setup-docker)
-- [Other Systems](#environment-setup-other)
+- [Environment Setup for Linux](#environment-setup-linux)
+- [Environment Setup for Docker](#environment-setup-docker)
+- [Environment Setup for Other Systems](#environment-setup-other)
 
-## Environment Setup Linux
+### Environment Setup for Linux
 First, clone the repository. We have included `cwe-bench-java` as a submodule, so use the following command to clone correctly:
 ```bash
 $ git clone https://github.com/iris-sast/iris --recursive
@@ -44,7 +44,7 @@ $ git clone https://github.com/iris-sast/iris --recursive
 <details>
 <summary>Installation Steps</summary>
   
-### Step 1. Conda environment  
+#### Step 1. Conda environment  
 Run `scripts/setup_environment.sh`. 
 ```bash
 $ chmod +x scripts/setup_environment.sh
@@ -56,7 +56,7 @@ This will do the following:
 - installs our [patched version of CodeQL 2.15.3](https://github.com/iris-sast/iris/releases/tag/codeql-0.8.3-patched). This version of CodeQL **is necessary** for IRIS. To prevent confusion in case users already have an existing CodeQL version, we unzip this within the root of the iris directory. Then we add a PATH entry to the path of the patched CodeQL's binary.
 - creates a directory to store CodeQL databases. 
 
-### Get the JDKs needed 
+#### Get the JDKs needed 
 We have included CWE-Bench-Java as a submodule in IRIS in the data folder. We have also provided scripts to fetch and build Java projects to be used with IRIS. 
 
 For building, we need Java distributions as well as Maven and Gradle for package management. In case you have a different system than Linux x64, please modify `data/cwe-bench-java/scripts/jdk_version.json`, `data/cwe-bench-java/scripts/mvn_version.json`, and `data/cwe-bench-java/scripts/gradle_version.json` to specify the corresponding JDK/MVN/Gradle files. In addition, please prepare 3 versions of JDK and put them under the java-env folder. Oracle requires an account to download the JDKs, and we are unable to provide an automated script. Download from the following URLs:
@@ -77,7 +77,7 @@ At this point, your `java-env` directory should look like
 
 After this proceed to step 2 on fetching and building Java projects.
 
-### Step 2. Fetch and build Java projects
+#### Step 2. Fetch and build Java projects
 Now run the fetch and build script. You can also choose to fetch and not build, or specify a set of projects. You can find project names in the project_slug column in `cwe-bench-java/data/build_info.csv`.
 ```bash
 # fetch projects and build them
@@ -100,7 +100,7 @@ $ python3 data/cwe-bench-java/scripts/setup.py --exclude apache
 ```
 This will create the `build-info` and `project-sources` directories. It will also install JDK, Maven, and Gradle versions used to build the projects in `cwe-bench-java`. `build-info` is used to store build information and `project-sources` is where the fetched projects are stored.
 
-### Step 3. Generate CodeQL databases
+#### Step 3. Generate CodeQL databases
 To use CodeQL, you will need to generate a CodeQL database for each project. We have provided a script to automate this. The script will generate databases for all projects found in `data/cwe-bench-java/project-sources`. To generate a database for a specific project, use the `--project` argument. 
 ```bash
 # build CodeQL databases for all projects in project-sources
@@ -115,11 +115,51 @@ $ which codeql
 ```
 Then update `CODEQL_DIR` in `src/config.py`. 
 
-### Step 4. Check IRIS directory configuration in `src/config.py`
+#### Step 4. Check IRIS directory configuration in `src/config.py`
 By running the provided scripts, you won't have to modify `src/config.py`. Double check that the paths in the configuration are correct. Each path variable has a comment explaining its purpose.
 
 </details>
 
+### Environment Setup for Docker
+Clone iris. The dockerfile has scripts that will create the conda environment, clones `cwe-bench-java`, and installs the patched CodeQL version. Before building the dockerfile you will need download the JDK versions needed. Then the dockerfile copies them to the container. 
+
+#### Get the JDKs needed 
+For building, we need Java distributions as well as Maven and Gradle for package management. In addition, please prepare 3 versions of JDK and **put them in the iris root directory**. Oracle requires an account to download the JDKs, and we are unable to provide an automated script. Download from the following URLs:
+
+JDK 7u80: https://www.oracle.com/java/technologies/javase/javase7-archive-downloads.html
+
+JDK 8u202: https://www.oracle.com/java/technologies/javase/javase8-archive-downloads.html
+
+JDK 17: https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html (Make sure to download specifically JDK 17, not 17.X.X)
+
+At this point, your `iris` directory should look like 
+```
+- /iris
+  - jdk-7u80-linux-x64.tar.gz
+  - jdk-8u202-linux-x64.tar.gz
+  - jdk-17_linux-x64_bin.tar.gz
+```
+
+Now, build and run the docker container. 
+```bash
+# build
+$ docker build -t iris .
+# run
+$ docker run -it iris
+# run with all GPUs 
+$ docker run --gpus all -it iris
+# run with specific GPUs
+$ docker run --gpus '"device=0,1"' -it iris
+```
+Confirm that the patched CodeQL is in your PATH.
+
+After this, proceed to step 2 on fetching and building Java projects.
+
+### Environment Setup for Other Systems
+
+**Mac**: If you have a Mac, you can also run IRIS. You must separately install java libraries using the dmg files provided by oracle (using the same links mentioned [here](#get-the-jdks-needed)). Please specify the appropriate Java directories in `data/cwe-bench-java/scripts/jdk_version.json`. Alternatively, you can use the provided dockerfile for setup.
+
+**Windows**: We have not evaluated IRIS on windows machines. If you are interested in extending IRIS's support to windows machines, please feel free to raise a PR.
 
 ## Quickstart
 Make sure you have followed all of the environment setup instructions before proceeding! 
@@ -139,10 +179,9 @@ The following is an example of using IRIS to analyze zerotunaround for vulnerabi
 $ python3 src/neusym_vul.py --query cwe-022wLLM --run-id <SOME_ID> --llm gpt-4 zeroturnaround__zt-zip_CVE-2018-1002201_1.12
 ```
 
-
 ### Outputs
 
-After Step 4, IRIS will generate `results.sarif` and `results_pp.sarif` files in `output/[project-name]/cwe-XXwLLM` containing the vulnerabilities found in the project before and after posthoc filtering. You can download [Sarif Viewer](https://marketplace.visualstudio.com/items?itemName=MS-SarifVSCode.sarif-viewer) to view the sarif files. Additionally, `results.csv` contains the vulnerabilities in a simplified form.
+After the steps above, IRIS will generate `results.sarif` and `results_pp.sarif` files in `output/[project-name]/cwe-XXwLLM` containing the vulnerabilities found in the project before and after posthoc filtering. You can download [Sarif Viewer](https://marketplace.visualstudio.com/items?itemName=MS-SarifVSCode.sarif-viewer) to view the sarif files. Additionally, `results.csv` contains the vulnerabilities in a simplified form.
 
 <details>
   <summary>Example Output directory structure (using run-id test1): </summary>
@@ -228,51 +267,6 @@ $ python3 scripts/build_codeql_dbs.py --project [project slug]
 $ python scripts/get_packages_codeql.py [project slug]
 ```
 
-
-
-
-
-## Environment Setup Docker
-Clone iris. The dockerfile has scripts that will create the conda environment, clones `cwe-bench-java`, and installs the patched CodeQL version. Before building the dockerfile you will need download the JDK versions needed. Then the dockerfile copies them to the container. 
-
-### Get the JDKs needed 
-For building, we need Java distributions as well as Maven and Gradle for package management. In addition, please prepare 3 versions of JDK and **put them in the iris root directory**. Oracle requires an account to download the JDKs, and we are unable to provide an automated script. Download from the following URLs:
-
-JDK 7u80: https://www.oracle.com/java/technologies/javase/javase7-archive-downloads.html
-
-JDK 8u202: https://www.oracle.com/java/technologies/javase/javase8-archive-downloads.html
-
-JDK 17: https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html (Make sure to download specifically JDK 17, not 17.X.X)
-
-At this point, your `iris` directory should look like 
-```
-- /iris
-  - jdk-7u80-linux-x64.tar.gz
-  - jdk-8u202-linux-x64.tar.gz
-  - jdk-17_linux-x64_bin.tar.gz
-```
-
-Now, build and run the docker container. 
-```bash
-# build
-$ docker build -t iris .
-# run
-$ docker run -it iris
-# run with all GPUs 
-$ docker run --gpus all -it iris
-# run with specific GPUs
-$ docker run --gpus '"device=0,1"' -it iris
-```
-Confirm that the patched CodeQL is in your PATH.
-
-After this, proceed to step 2 on fetching and building Java projects.
-
-## Environment Setup Other
-
-**Mac**: If you have a Mac, you can also run IRIS. You must separately install java libraries using the dmg files provided by oracle (using the same links mentioned [here](#get-the-jdks-needed)). Please specify the appropriate Java directories in `data/cwe-bench-java/scripts/jdk_version.json`. Alternatively, you can use the provided dockerfile for setup.
-
-**Windows**: We have not evaluated IRIS on windows machines. If you are interested in extending IRIS's support to windows machines, please feel free to raise a PR.
-
 ## Supported CWEs
 Here are the following CWEs supported, that you can specify as an argument to `--query` when using `src/neusym_vul.py` and `src/neusym_vul_for_query.py`. 
 
@@ -280,8 +274,6 @@ Here are the following CWEs supported, that you can specify as an argument to `-
 - `cwe-078wLLM` - [CWE-078](https://cwe.mitre.org/data/definitions/78.html) (OS Command Injection)
 - `cwe-079wLLM` - [CWE-079](https://cwe.mitre.org/data/definitions/79.html) (Cross-Site Scripting)
 - `cwe-094wLLM` - [CWE-094](https://cwe.mitre.org/data/definitions/94.html) (Code Injection)
-
-
 
 ## Supported Models
 We support the following models with our models API wrapper (found in `src/models`) in the project. Listed below are the arguments you can use for `--llm` when using `src/neusym_vul.py` and `src/neusym_vul_for_query.py`. You're free to use your own way of instantiating models or adding on to the existing library. Some of them require your own API key or license agreement on HuggingFace. 
