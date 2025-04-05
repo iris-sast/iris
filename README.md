@@ -32,9 +32,9 @@ We have curated a dataset of Java projects, containing 120 real-world previously
 ## Environment Setup
 
 We support multiple ways to run IRIS:
-- [Environment Setup for Linux](#environment-setup-linux)
-- [Environment Setup for Docker](#environment-setup-docker)
-- [Environment Setup for Other Systems](#environment-setup-other)
+- [Environment Setup for Linux](#environment-setup-for-linux)
+- [Environment Setup for Docker](#environment-setup-for-docker)
+- [Environment Setup for Other Systems](#environment-setup-for-other-systems)
 
 ### Environment Setup for Linux
 First, clone the repository. We have included `cwe-bench-java` as a submodule, so use the following command to clone correctly:
