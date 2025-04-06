@@ -32,9 +32,9 @@ We have curated a dataset of Java projects, containing 120 real-world previously
 ## Environment Setup
 
 We support multiple ways to run IRIS:
-- [Environment Setup for Linux](#environment-setup-linux)
-- [Environment Setup for Docker](#environment-setup-docker)
-- [Environment Setup for Other Systems](#environment-setup-other)
+- [Environment Setup for Linux](#environment-setup-for-linux)
+- [Environment Setup for Docker](#environment-setup-for-docker)
+- [Environment Setup for Other Systems](#environment-setup-for-other-systems)
 
 ### Environment Setup for Linux
 First, clone the repository. We have included `cwe-bench-java` as a submodule, so use the following command to clone correctly:
@@ -121,6 +121,9 @@ By running the provided scripts, you won't have to modify `src/config.py`. Doubl
 </details>
 
 ### Environment Setup for Docker
+<details>
+<summary>Installation Steps</summary>
+  
 Clone iris. The dockerfile has scripts that will create the conda environment, clones `cwe-bench-java`, and installs the patched CodeQL version. Before building the dockerfile you will need download the JDK versions needed. Then the dockerfile copies them to the container. 
 
 #### Get the JDKs needed 
@@ -153,7 +156,8 @@ $ docker run --gpus '"device=0,1"' -it iris
 ```
 Confirm that the patched CodeQL is in your PATH.
 
-After this, proceed to step 2 on fetching and building Java projects.
+After this, proceed to [step 2](#step-2-fetch-and-build-java-projects) on fetching and building Java projects.
+</details>
 
 ### Environment Setup for Other Systems
 
