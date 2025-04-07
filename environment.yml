@@ -12,4 +12,3 @@ dependencies:
   - accelerate
   - transformers
   - pytorch=2.5
-  - pytorch-cuda=12.1
