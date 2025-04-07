@@ -54,7 +54,13 @@ $ source ~/.bashrc # make sure to source .bashrc for PATH update
 This will do the following:
 - creates a conda environment specified by environment.yml
 - installs our [patched version of CodeQL 2.15.3](https://github.com/iris-sast/iris/releases/tag/codeql-0.8.3-patched). This version of CodeQL **is necessary** for IRIS. To prevent confusion in case users already have an existing CodeQL version, we unzip this within the root of the iris directory. Then we add a PATH entry to the path of the patched CodeQL's binary.
-- creates a directory to store CodeQL databases. 
+- creates a directory to store CodeQL databases.
+
+If you have a CUDA-capable GPU and want to enable hardware acceleration, install the appropriate CUDA toolkit, for example:
+```bash
+$ conda install pytorch-cuda=12.1 -c nvidia -c pytorch
+```
+Replace 12.1 with the CUDA version compatible with your GPU and drivers, if needed.
 
 #### Get the JDKs needed 
 We have included CWE-Bench-Java as a submodule in IRIS in the data folder. We have also provided scripts to fetch and build Java projects to be used with IRIS. 
@@ -123,7 +129,8 @@ By running the provided scripts, you won't have to modify `src/config.py`. Doubl
 ### Environment Setup for Docker
 <details>
 <summary>Installation Steps</summary>
-  
+
+#### Step 1. Docker Setup
 Clone iris. The dockerfile has scripts that will create the conda environment, clones `cwe-bench-java`, and installs the patched CodeQL version. Before building the dockerfile you will need download the JDK versions needed. Then the dockerfile copies them to the container. 
 
 #### Get the JDKs needed 
@@ -143,20 +150,72 @@ At this point, your `iris` directory should look like
   - jdk-17_linux-x64_bin.tar.gz
 ```
 
-Now, build and run the docker container. 
+Now, build and run the docker container.
 ```bash
-# build
+# build for Windows/ Mac with Intel
 $ docker build -t iris .
+# build for ARM architecture/ Apple Silicon
+$ docker build --platform=linux/amd64 -t iris .
 # run
 $ docker run -it iris
-# run with all GPUs 
+# If run with all GPUs 
 $ docker run --gpus all -it iris
 # run with specific GPUs
 $ docker run --gpus '"device=0,1"' -it iris
 ```
+
+If you choose to run with GPUs and have a CUDA-capable GPU and want to enable hardware acceleration, install the appropriate CUDA toolkit:
+```bash
+$ conda activate iris
+$ conda install pytorch-cuda=12.1 -c nvidia -c pytorch
+```
+Replace 12.1 with the CUDA version compatible with your GPU and drivers, if needed.
+
 Confirm that the patched CodeQL is in your PATH.
 
-After this, proceed to [step 2](#step-2-fetch-and-build-java-projects) on fetching and building Java projects.
+After this, proceed to step 2 on fetching and building Java projects.
+
+#### Step 2. Fetch and build Java projects
+Now run the fetch and build script. You can also choose to fetch and not build, or specify a set of projects. You can find project names in the project_slug column in `cwe-bench-java/data/build_info.csv`.
+```bash
+# fetch projects and build them
+$ python3 data/cwe-bench-java/scripts/setup.py
+
+# fetch projects and don't build them
+$ python3 data/cwe-bench-java/scripts/setup.py --no-build
+
+# example - build the perwendel__spark_CVE-2018-9159_2.7.1 project 
+$ python3 data/cwe-bench-java/scripts/setup.py --filter perwendel__spark_CVE-2018-9159_2.7.1
+
+# example - only build projects under CWE-022 and CWE-078
+$ python3 data/cwe-bench-java/scripts/setup.py --cwe CWE-022 CWE-078 
+
+# example - only build keycloak projects 
+$ python3 data/cwe-bench-java/scripts/setup.py --filter keycloak 
+
+# example - do not build any apache related projects
+$ python3 data/cwe-bench-java/scripts/setup.py --exclude apache       
+```
+This will create the `build-info` and `project-sources` directories. It will also install JDK, Maven, and Gradle versions used to build the projects in `cwe-bench-java`. `build-info` is used to store build information and `project-sources` is where the fetched projects are stored.
+
+#### Step 3. Generate CodeQL databases
+To use CodeQL, you will need to generate a CodeQL database for each project. We have provided a script to automate this. The script will generate databases for all projects found in `data/cwe-bench-java/project-sources`. To generate a database for a specific project, use the `--project` argument. 
+```bash
+# build CodeQL databases for all projects in project-sources
+$ python3 scripts/build_codeql_dbs.py 
+
+# build a specific CodeQL database given the project slug
+$ python3 scripts/build_codeql_dbs.py --project perwendel__spark_CVE-2018-9159_2.7.1 
+```
+Note - if the script fails due to trying to locate CodeQL, run the following to find the path:
+```bash
+$ which codeql
+```
+Then update `CODEQL_DIR` in `src/config.py`. 
+
+#### Step 4. Check IRIS directory configuration in `src/config.py`
+By running the provided scripts, you won't have to modify `src/config.py`. Double check that the paths in the configuration are correct. Each path variable has a comment explaining its purpose.
+
 </details>
 
 ### Environment Setup for Other Systems
