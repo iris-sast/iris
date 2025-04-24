@@ -3,6 +3,7 @@ IRIS is a neurosymbolic framework that combines LLMs with static analysis for se
 
 - [Workflow](#workflow)
 - [Dataset](#dataset)
+- [Results](#results)
 - [Environment Setup](#environment-setup)
 - [Quickstart](#quickstart)
 - [Supported CWEs](#supported-cwes)
@@ -28,7 +29,17 @@ At a high level, IRIS takes a project and a CWE (vulnerability class, such as pa
 We have curated a dataset of Java projects, containing 120 real-world previously known vulnerabilities across 4 popular vulnerability classes. The dataset is also available to use with the Hugging Face datasets library. 
 
 [CWE-Bench-Java](https://github.com/iris-sast/cwe-bench-java)
-[CWE-Bench-Java on Hugging Face](https://huggingface.co/datasets/iris-sast/CWE-Bench-Java) 
+[CWE-Bench-Java on Hugging Face](https://huggingface.co/datasets/iris-sast/CWE-Bench-Java)
+
+## Results 
+Results on the effectiveness of IRIS across 121 projects and 9 LLMs can be found at `/results`. Each model has a unique CSV file, with the following structure as an example.
+
+| CWE ID | CVE | Author | Package | Tag | Recall | Alerts | Paths | TP Alerts | TP Paths | Precision | F1 |
+| -- | ------------ | ------ | -------|----------|-----------------|------------------------|------------|------------|-------------|-----------------|----------------|
+| CWE-022 | CVE-2016-10726 | DSpace | DSpace | 4.4 | 0 | 31 | 63 | 0 | 0 | 0 | 0 |
+
+`None` refers to data that was not collected, while `N/A` refers to a measure that cannot be calculated, either because of missing data or a division by zero.
+
 ## Environment Setup
 
 We support multiple ways to run IRIS:
