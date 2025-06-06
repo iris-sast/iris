@@ -246,6 +246,11 @@ class LLM:
         elif model_name.lower().startswith("qwen"):
             from models.qwen import QwenModel
             model=QwenModel(model_name=model_name, logger=logger, **kwargs)
+
+        elif model_name.lower().startswith("gemini"):
+            from models.gemini import GeminiModel
+            model=GeminiModel(model_name=model_name, logger=logger, **kwargs)
+
         else:
             logger.log(model_name + " not implemented")
             exit(1)
