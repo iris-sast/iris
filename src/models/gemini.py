@@ -18,7 +18,6 @@ _GEMINI_DEFAULT_PARAMS = {"temperature": 0.4, "top_p": 1, "top_k": 32, "max_toke
 
 class GeminiModel(LLM):
     def __init__(self, model_name, logger: MyLogger, **kwargs):
-        super().__init__(model_name, logger, _model_name_map, **kwargs)
         # https://aistudio.google.com/app/apikey
         if ("google_api_key" in kwargs) and (kwargs["google_api_key"] is not None):
             api_key = kwargs["google_api_key"]
