@@ -43,26 +43,36 @@ Results on the effectiveness of IRIS across 121 projects and 9 LLMs can be found
 
 ## Environment Setup
 
+You need a set of JDKs, Gradle, and Maven versions to run IRIS with CWE-Bench-Java, a benchmark of 120 vulnerable Java projects. These versions are indicated in ```.json``` files.
+
 We support multiple ways to run IRIS:
 - [Environment Setup for Linux](#environment-setup-for-linux)
 - [Environment Setup for Docker](#environment-setup-for-docker)
 - [Environment Setup for Other Systems](#environment-setup-for-other-systems)
 
 ### Environment Setup for Linux
+<details>
+<summary>Installation Steps</summary>
+
+#### Step 1. Clone IRIS 
 First, clone the repository. We have included `cwe-bench-java` as a submodule, so use the following command to clone correctly:
 ```bash
 $ git clone https://github.com/iris-sast/iris --recursive
 ```
-<details>
-<summary>Installation Steps</summary>
-  
-#### Step 1. Conda environment  
+
+#### Step 2. Conda environment  
 Run `scripts/setup_environment.sh`. 
 ```bash
 $ chmod +x scripts/setup_environment.sh
 $ bash ./scripts/setup_environment.sh
 $ source ~/.bashrc # make sure to source .bashrc for PATH update
 ```
+If you are building for Mac, run the following bash command instead.
+```bash
+$ bash ./scripts/setup_environment.sh --mac
+```
+This will download CodeQL directly, instead of installing our patched version. Please note that this does not ensure reproducibility of results.
+
 This will do the following:
 - creates a conda environment specified by environment.yml
 - installs our [patched version of CodeQL 2.15.3](https://github.com/iris-sast/iris/releases/tag/codeql-0.8.3-patched). This version of CodeQL **is necessary** for IRIS. To prevent confusion in case users already have an existing CodeQL version, we unzip this within the root of the iris directory. Then we add a PATH entry to the path of the patched CodeQL's binary.
@@ -74,10 +84,10 @@ $ conda install pytorch-cuda=12.1 -c nvidia -c pytorch
 ```
 Replace 12.1 with the CUDA version compatible with your GPU and drivers, if needed.
 
-#### Get the JDKs needed 
+#### Step 3: Get the JDKs needed 
 We have included CWE-Bench-Java as a submodule in IRIS in the data folder. We have also provided scripts to fetch and build Java projects to be used with IRIS. 
 
-For building, we need Java distributions as well as Maven and Gradle for package management. In case you have a different system than Linux x64, please modify `data/cwe-bench-java/scripts/jdk_version.json`, `data/cwe-bench-java/scripts/mvn_version.json`, and `data/cwe-bench-java/scripts/gradle_version.json` to specify the corresponding JDK/MVN/Gradle files. In addition, please prepare 3 versions of JDK and put them under the java-env folder. Oracle requires an account to download the JDKs, and we are unable to provide an automated script. Download from the following URLs:
+For building, we need Java distributions as well as Maven and Gradle for package management. In case you have a different system than Linux x64, please modify `data/cwe-bench-java/scripts/jdk_version.json`, `data/cwe-bench-java/scripts/mvn_version.json`, and `data/cwe-bench-java/scripts/gradle_version.json` to specify the corresponding JDK/MVN/Gradle files. For Mac in particular, please install the JDKs using the ```.dmg``` files and adjust the ```.json``` accordingly. In addition, please prepare 3 versions of JDK and put them under the ```java-env``` folder. Oracle requires an account to download the JDKs, and we are unable to provide an automated script. Download from the following URLs:
 
 JDK 7u80: https://www.oracle.com/java/technologies/javase/javase7-archive-downloads.html
 
@@ -93,9 +103,9 @@ At this point, your `java-env` directory should look like
   - jdk-17_linux-x64_bin.tar.gz
 ```
 
-After this proceed to step 2 on fetching and building Java projects.
+After this proceed to step 4 on fetching and building Java projects.
 
-#### Step 2. Fetch and build Java projects
+#### Step 4. Fetch and build Java projects
 Now run the fetch and build script. You can also choose to fetch and not build, or specify a set of projects. You can find project names in the project_slug column in `cwe-bench-java/data/build_info.csv`.
 ```bash
 # fetch projects and build them
@@ -118,7 +128,7 @@ $ python3 data/cwe-bench-java/scripts/setup.py --exclude apache
 ```
 This will create the `build-info` and `project-sources` directories. It will also install JDK, Maven, and Gradle versions used to build the projects in `cwe-bench-java`. `build-info` is used to store build information and `project-sources` is where the fetched projects are stored.
 
-#### Step 3. Generate CodeQL databases
+#### Step 5. Generate CodeQL databases
 To use CodeQL, you will need to generate a CodeQL database for each project. We have provided a script to automate this. The script will generate databases for all projects found in `data/cwe-bench-java/project-sources`. To generate a database for a specific project, use the `--project` argument. 
 ```bash
 # build CodeQL databases for all projects in project-sources
@@ -133,7 +143,7 @@ $ which codeql
 ```
 Then update `CODEQL_DIR` in `src/config.py`. 
 
-#### Step 4. Check IRIS directory configuration in `src/config.py`
+#### Step 6. Check IRIS directory configuration in `src/config.py`
 By running the provided scripts, you won't have to modify `src/config.py`. Double check that the paths in the configuration are correct. Each path variable has a comment explaining its purpose.
 
 </details>
@@ -143,10 +153,10 @@ By running the provided scripts, you won't have to modify `src/config.py`. Doubl
 <summary>Installation Steps</summary>
 
 #### Step 1. Docker Setup
-Clone iris. The dockerfile has scripts that will create the conda environment, clones `cwe-bench-java`, and installs the patched CodeQL version. Before building the dockerfile you will need download the JDK versions needed. Then the dockerfile copies them to the container. 
+Clone IRIS. The Dockerfile has scripts that will create the conda environment, clone `cwe-bench-java`, and install the patched CodeQL version. Before building the Dockerfile you will need download the JDK versions needed. Then the Dockerfile copies them to the container. 
 
-#### Get the JDKs needed 
-For building, we need Java distributions as well as Maven and Gradle for package management. In addition, please prepare 3 versions of JDK and **put them in the iris root directory**. Oracle requires an account to download the JDKs, and we are unable to provide an automated script. Download from the following URLs:
+#### Step 2. Get the JDKs needed 
+For building, we need Java distributions as well as Maven and Gradle for package management. In addition, please prepare 3 versions of JDK and **put them in the IRIS root directory**. Oracle requires an account to download the JDKs, and we are unable to provide an automated script. Download from the following URLs:
 
 JDK 7u80: https://www.oracle.com/java/technologies/javase/javase7-archive-downloads.html
 
@@ -162,8 +172,7 @@ At this point, your `iris` directory should look like
   - jdk-17_linux-x64_bin.tar.gz
 ```
 
-Now, build and run the docker container.
-```bash
+#### Step 3. Build and run the Docker container
 # build for Windows/ Mac with Intel
 $ docker build -t iris .
 # build for ARM architecture/ Apple Silicon
@@ -185,9 +194,9 @@ Replace 12.1 with the CUDA version compatible with your GPU and drivers, if need
 
 Confirm that the patched CodeQL is in your PATH.
 
-After this, proceed to step 2 on fetching and building Java projects.
+After this, proceed to step 4 on fetching and building Java projects.
 
-#### Step 2. Fetch and build Java projects
+#### Step 4. Fetch and build Java projects
 Now run the fetch and build script. You can also choose to fetch and not build, or specify a set of projects. You can find project names in the project_slug column in `cwe-bench-java/data/build_info.csv`.
 ```bash
 # fetch projects and build them
@@ -210,7 +219,7 @@ $ python3 data/cwe-bench-java/scripts/setup.py --exclude apache
 ```
 This will create the `build-info` and `project-sources` directories. It will also install JDK, Maven, and Gradle versions used to build the projects in `cwe-bench-java`. `build-info` is used to store build information and `project-sources` is where the fetched projects are stored.
 
-#### Step 3. Generate CodeQL databases
+#### Step 5. Generate CodeQL databases
 To use CodeQL, you will need to generate a CodeQL database for each project. We have provided a script to automate this. The script will generate databases for all projects found in `data/cwe-bench-java/project-sources`. To generate a database for a specific project, use the `--project` argument. 
 ```bash
 # build CodeQL databases for all projects in project-sources
@@ -225,16 +234,16 @@ $ which codeql
 ```
 Then update `CODEQL_DIR` in `src/config.py`. 
 
-#### Step 4. Check IRIS directory configuration in `src/config.py`
+#### Step 6. Check IRIS directory configuration in `src/config.py`
 By running the provided scripts, you won't have to modify `src/config.py`. Double check that the paths in the configuration are correct. Each path variable has a comment explaining its purpose.
 
 </details>
 
 ### Environment Setup for Other Systems
 
-**Mac**: If you have a Mac, you can also run IRIS. You must separately install java libraries using the dmg files provided by oracle (using the same links mentioned [here](#get-the-jdks-needed)). Please specify the appropriate Java directories in `data/cwe-bench-java/scripts/jdk_version.json`. Alternatively, you can use the provided dockerfile for setup.
+**Mac**: If you are using a Mac device, you can build IRIS one of two ways. You can build following the [Docker instructions](#environment-setup-for-docker) above, or you can build natively on Mac using the [Linux instructions](#environment-setup-for-linux). However, it is far more difficult to install the dependencies for IRIS natively, and we cannot insure reproducibility of results. Therefore, it is strongly advised to build using Docker.
 
-**Windows**: We have not evaluated IRIS on windows machines. If you are interested in extending IRIS's support to windows machines, please feel free to raise a PR.
+**Windows**: We have not evaluated IRIS on Windows machines. If you are interested in extending IRIS's support to Windows machines, please feel free to raise a PR.
 
 ## Quickstart
 Make sure you have followed all of the environment setup instructions before proceeding! 
