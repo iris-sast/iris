@@ -6,6 +6,15 @@
 # Exit on error
 set -e
 
+# Checking for mac setup
+mac_codeql="false"
+for arg in "$@"; do
+  if [[ "$arg" == "--mac" ]]; then
+    mac_codeql="true"
+    break
+  fi
+done
+
 echo "Starting setup process..."
 
 # Check if conda is installed
@@ -34,12 +43,22 @@ CODEQL_DIR="$PROJECT_ROOT/codeql"
 mkdir -p "$CODEQL_DIR"
 mkdir -p "$PROJECT_ROOT/data/codeql-dbs"
 
-echo "Downloading patched CodeQL..."
-CODEQL_URL="https://github.com/iris-sast/iris/releases/download/codeql-0.8.3-patched/codeql.zip"
-CODEQL_ZIP="codeql.zip"
-if ! curl -L -o "$CODEQL_ZIP" "$CODEQL_URL"; then
-    echo "Error: Failed to download CodeQL"
-    exit 1
+if [[ "$mac_codeql" == "true" ]]; then
+    echo "Downloading CodeQL for osx-64..."
+    CODEQL_URL="https://github.com/github/codeql-cli-binaries/releases/download/v2.21.4/codeql-osx64.zip"
+    CODEQL_ZIP="codeql.zip"
+    if ! curl -L -o "$CODEQL_ZIP" "$CODEQL_URL"; then
+        echo "Error: Failed to download CodeQL"
+        exit 1
+    fi
+else
+    echo "Downloading patched CodeQL..."
+    CODEQL_URL="https://github.com/iris-sast/iris/releases/download/codeql-0.8.3-patched/codeql.zip"
+    CODEQL_ZIP="codeql.zip"
+    if ! curl -L -o "$CODEQL_ZIP" "$CODEQL_URL"; then
+        echo "Error: Failed to download CodeQL"
+        exit 1
+    fi
 fi
 
 echo "Extracting CodeQL..."
