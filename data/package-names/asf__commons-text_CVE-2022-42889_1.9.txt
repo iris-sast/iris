@@ -1,0 +1,7 @@
+org.apache.commons.text
+org.apache.commons.text.diff
+org.apache.commons.text.io
+org.apache.commons.text.lookup
+org.apache.commons.text.matcher
+org.apache.commons.text.similarity
+org.apache.commons.text.translate

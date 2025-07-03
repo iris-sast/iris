@@ -1,3 +1,0 @@
-[submodule "data/cwe-bench-java"]
-	path = data/cwe-bench-java
-	url = https://github.com/iris-sast/cwe-bench-java.git

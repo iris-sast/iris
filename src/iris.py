@@ -19,7 +19,7 @@ THIS_SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 NEUROSYMSA_ROOT_DIR = os.path.abspath(f"{THIS_SCRIPT_DIR}/../")
 sys.path.append(NEUROSYMSA_ROOT_DIR)
 
-from src.config import CODEQL_DIR, CODEQL_DB_PATH, PACKAGE_MODULES_PATH, OUTPUT_DIR, ALL_METHOD_INFO_DIR, PROJECT_SOURCE_CODE_DIR, CVES_MAPPED_W_COMMITS_DIR
+from src.config import CODEQL_DIR, CODEQL_DB_PATH, PACKAGE_MODULES_PATH, OUTPUT_DIR, ALL_METHOD_INFO_DIR, PROJECT_SOURCE_CODE_DIR, CVES_MAPPED_W_COMMITS_DIR, CODEQL_QUERY_VERSION
 
 
 from src.logger import Logger
@@ -41,8 +41,8 @@ from src.modules.evaluation_pipeline import EvaluationPipeline
 from src.models.llm import LLM
 
 CODEQL = f"{CODEQL_DIR}/codeql"
-CODEQL_CUSTOM_QUERY_DIR = f"{CODEQL_DIR}/qlpacks/codeql/java-queries/0.8.3/myqueries"
-CODEQL_CUSTOM_YML_DIR = f"{CODEQL_DIR}/qlpacks/codeql/java-queries/0.8.3/.codeql/libraries/codeql/java-all/0.8.3/ext"
+CODEQL_CUSTOM_QUERY_DIR = f"{CODEQL_DIR}/qlpacks/codeql/java-queries/{CODEQL_QUERY_VERSION}/myqueries"
+CODEQL_CUSTOM_YML_DIR = f"{CODEQL_DIR}/qlpacks/codeql/java-queries/{CODEQL_QUERY_VERSION}/.codeql/libraries/codeql/java-all/{CODEQL_QUERY_VERSION}/ext"
 
 PRIMITIVE_TYPES = set([
     "void",

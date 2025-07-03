@@ -115,7 +115,7 @@ def main():
     internal_package = args.internal_package
     
     iris_root = Path(__file__).parent.parent
-    output_file = iris_root / "data" / "cwe-bench-java" / "package-names" / f"{project_name}.txt"
+    output_file = iris_root / "data" / "package-names" / f"{project_name}.txt"
     query_path = iris_root / "scripts" / "codeql-queries" / "packages.ql"
     db_path = iris_root / "data" / "codeql-dbs" / project_name
     project_path = Path(PROJECT_SOURCE_CODE_DIR) / project_name

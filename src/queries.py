@@ -36,6 +36,66 @@
      },
  """
 QUERIES = {
+  "cwe-089wLLM": {
+    "name": "cwe-089wLLM",
+    "cwe_id": "089",
+    "cwe_id_short": "89",
+    "cwe_id_tag": "CWE-89",
+    "type": "cwe-query",
+    "desc": "SQL Injection via string concatenation",
+    "queries": [
+      "cwe-queries/cwe-089/cwe-089wLLM.ql",
+      "cwe-queries/cwe-089/MySqlInjectionQuery.qll",
+      "cwe-queries/cwe-089/MySqlConcatenatedLib.qll"
+      ],
+    "prompts": {
+      "cwe_id": "CWE-089",
+      "desc": "SQL Injection via string concatenation",
+      "long_desc": """\
+SQL Injection is a critical vulnerability that arises when user input is used to construct SQL queries without proper validation. \
+This allows attackers to inject malicious SQL code into the query, bypass authentication, retrieve sensitive data, \
+or execute arbitrary commands on the database server.\
+This vulnerability occurs when applications dynamically build SQL strings using input from sources such as HTTP request parameters \
+without using parameterized queries or prepared statements. Attackers can exploit this to perform unauthorized reads, data modification, or denial of service.
+To address SQL injection, use parameterized queries, prepared statements, etc. Input validation, \
+least privilege database access, and error message suppression are also important secondary defenses.
+      """,
+      "examples": [
+        {
+          "package": "javax.servlet.http",
+          "class": "HttpServletRequest",
+          "method": "getParameter",
+          "signature": "String getParameter(String name)",
+          "sink_args": [],
+          "type": "source"
+        },
+        {
+          "package": "java.sql",
+          "class": "Statement",
+          "method": "execute",
+          "signature": "boolean execute(String sql)",
+          "sink_args": ["sql"],
+          "type": "sink"
+        },
+        {
+          "package": "java.sql",
+          "class": "Statement",
+          "method": "executeQuery",
+          "signature": "ResultSet executeQuery(String sql)",
+          "sink_args": ["sql"],
+          "type": "sink"
+        },
+        {
+          "package": "java.lang",
+          "class": "StringBuilder",
+          "method": "append",
+          "signature": "StringBuilder append(String str)",
+          "sink_args": [],
+          "type": "taint-propagator"
+        }
+      ]
+    }
+  },
   "cwe-022wLLM": {
     "name": "cwe-022wLLM",
     "type": "cwe-query",
@@ -320,6 +380,65 @@ cookie. Logging functions are NOT sinks for XSS attacks.""",
     "type": "codeql-query",
     "experimental": True,
   },
+  "cwe-502wLLM": {
+    "name": "cwe-502wLLM",
+    "type": "cwe-query",
+    "cwe_id": "502",
+    "cwe_id_short": "502",
+    "cwe_id_tag": "CWE-502",
+    "desc": "Deserialization of Untrusted Data",
+    "queries": [
+      "cwe-queries/cwe-502/MyUnsafeDeserialization.ql",
+      "cwe-queries/cwe-502/MyUnsafeDeserializationQuery.qll"
+    ],
+    "prompts": {
+      "cwe_id": "CWE-502",
+      "desc": "Deserialization of Untrusted Data",
+      "long_desc": """\
+        Deserialization of untrusted data occurs when an application deserializes input \
+        without validating its origin or ensuring the safety of its content. An attacker \
+        can exploit this to instantiate unexpected classes, invoke arbitrary methods, \
+        or even trigger code execution via malicious object graphs or gadget chains. \
+        This can lead to serious consequences such as unauthorized access, data corruption, \
+        or remote code execution. Common mitigation strategies include using class allowlists, \
+        avoiding unnecessary deserialization, making sensitive fields transient, and validating \
+        object types before deserializing.""",
+      "examples": [
+        {
+          "package": "java.io",
+          "class": "ObjectInputStream",
+          "method": "readObject",
+          "signature": "Object readObject()",
+          "sink_args": [],
+          "type": "sink"
+        },
+        {
+          "package": "java.io",
+          "class": "ByteArrayInputStream",
+          "method": "ByteArrayInputStream",
+          "signature": "ByteArrayInputStream(byte[] buf)",
+          "sink_args": [],
+          "type": "source"
+        },
+        {
+          "package": "java.beans",
+          "class": "XMLDecoder",
+          "method": "readObject",
+          "signature": "Object readObject()",
+          "sink_args": [],
+          "type": "sink"
+        },
+        {
+          "package": "org.apache.commons.lang3",
+          "class": "SerializationUtils",
+          "method": "deserialize",
+          "signature": "<T> T deserialize(byte[] objectData)",
+          "sink_args": ["objectData"],
+          "type": "sink"
+        }
+      ]
+    }
+  },
   "cwe-094wLLM": {
     "name": "cwe-094wLLM",
     "cwe_id": "094",
@@ -412,6 +531,149 @@ of proper input/output data validation.""",
     "type": "codeql-query",
     "experimental": True,
   },
+  "cwe-918wLLM": {
+    "name": "cwe-918wLLM",
+    "cwe_id": "918",
+    "cwe_id_short": "918",
+    "cwe_id_tag": "CWE-918",
+    "type": "cwe-query",
+    "desc": "Server-Side Request Forgery (SSRF)",
+    "queries": [
+      "cwe-queries/cwe-918/cwe-918wLLM.ql",
+      "cwe-queries/cwe-918/MyRequestForgeryQuery.qll"
+    ],
+    "prompts": {
+      "cwe_id": "CWE-918",
+      "desc": "Server-Side Request Forgery (SSRF)",
+      "long_desc": """\
+Server-Side Request Forgery (SSRF) occurs when an application makes a network request
+using a URL or host that is fully or partially controlled by user input. Attackers
+can abuse this to make the server perform HTTP(S) or other protocol requests to
+internal services, cloud metadata endpoints, or arbitrary external servers. This
+can lead to sensitive information disclosure, port scanning, or further
+pivoting within the infrastructure. Properly validate and sanitize any user
+input that influences outbound request destinations, and employ allow-lists
+or network egress filtering where possible.""",
+      "examples": [
+        {
+          "package": "javax.servlet.http",
+          "class": "HttpServletRequest",
+          "method": "getParameter",
+          "signature": "String getParameter(String name)",
+          "type": "source"
+        },
+        {
+          "package": "org.apache.http.client",
+          "class": "HttpClient",
+          "method": "execute",
+          "signature": "HttpResponse execute(HttpUriRequest request)",
+          "sink_args": ["request"],
+          "type": "sink"
+        },
+        {
+          "package": "java.net",
+          "class": "URL",
+          "method": "URL",
+          "signature": "URL(String spec)",
+          "type": "taint-propagator"
+        }
+      ]
+    }
+  },
+"cwe-807wLLM": {
+    "name": "cwe-807wLLM",
+    "type": "cwe-query",
+    "cwe_id": "807",
+    "cwe_id_short": "807",
+    "cwe_id_tag": "CWE-807",
+    "desc": "Reliance on Untrusted Inputs in a Security Decision",
+    "queries": [
+        "cwe-queries/cwe-807/cwe-807wLLM.ql",
+        "cwe-queries/cwe-807/MyTaintedPermissionsCheckQuery.qll",
+    ],
+    "prompts": {
+        "cwe_id": "CWE-807",
+        "desc": "Reliance on Untrusted Inputs in a Security Decision",
+        "long_desc": """\
+CWE-807 refers that the product uses a protection mechanism that relies on the existence or values of an input, but the input can be modified by an untrusted actor in a way that bypasses the protection mechanism. If permission checks (such as Subject.isPermitted or similar APIs) receive tainted data, attackers may manipulate permission strings or resource identifiers to escalate privileges or access unauthorized resources. Sources are typically user-provided values (e.g., HTTP parameters), and sinks are permission check methods or constructors that determine access control.
+""",
+        "examples": [
+            {
+                "package": "javax.servlet.http",
+                "class": "HttpServletRequest",
+                "method": "getParameter",
+                "signature": "String getParameter(String name)",
+                "sink_args": [],
+                "type": "source"
+            },
+            {
+                "package": "org.apache.shiro.subject",
+                "class": "Subject",
+                "method": "isPermitted",
+                "signature": "boolean isPermitted(String permission)",
+                "sink_args": ["permission"],
+                "type": "sink"
+            },
+            {
+            "package": "java.util",
+            "class": "HashMap",
+            "method": "putAll",
+            "signature": "void putAll(Map<? extends K,? extends V> m)",
+            "propagator_args": ["m"],
+            "type": "propagator"
+            }
+        ]
+    }
+},
+"cwe-352wLLM": {
+  "name": "cwe-352wLLM",
+  "type": "cwe-query",
+  "cwe_id": "352",
+  "cwe_id_short": "352",
+  "cwe_id_tag": "CWE-352",
+  "desc": "Cross-Site Request Forgery",
+  "queries": [
+    "cwe-queries/cwe-352/cwe-352wLLM.ql",
+    "cwe-queries/cwe-352/MyJsonpInjectionLib.qll",
+"cwe-queries/cwe-352/MyJsonStringLib.qll",
+  ],
+  "prompts": {
+    "cwe_id": "CWE-352",
+    "desc": "Cross-Site Request Forgery (JSONP Injection)",
+    "long_desc": """\
+A Cross-Site Request Forgery (CSRF) vulnerability allows attackers to perform unauthorized actions on behalf of authenticated users. 
+In Java web applications, insecure JSONP endpoints may be abused for CSRF or data exfiltration attacks if the callback parameter is not properly validated. 
+Sources typically include untrusted HTTP request parameters (such as 'callback'). Sinks are points where JSONP responses are constructed and returned to the client without validation.""",
+    "examples": [
+      {
+        "package": "javax.servlet.http",
+        "class": "HttpServletRequest",
+        "method": "getParameter",
+        "signature": "String getParameter(String name)",
+        "sink_args": [],
+        "type": "source",
+      },
+      {
+        "package": "javax.servlet.http",
+        "class": "HttpServletResponse",
+        "method": "getWriter",
+        "signature": "PrintWriter getWriter()",
+        "sink_args": [],
+        "type": "sink",
+      },
+      {
+        "package": "org.json",
+        "class": "JSONObject",
+        "method": "toString",
+        "signature": "String toString()",
+        "sink_args": [],
+        "type": "taint-propagator",
+      },
+    ]
+  }
+},
+
+
   "fetch_external_apis": {
     "name": "fetch_external_apis",
     "queries": [

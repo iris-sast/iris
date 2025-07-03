@@ -1,0 +1,197 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  verify-docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+    
+      - name: Build image
+        run: docker build -f Dockerfile --platform linux/x86_64 -t iris:latest .
+
+      - name: Run image
+        run: docker run --platform=linux/amd64 iris:latest
+
+  get-projects:
+    runs-on: ubuntu-latest
+    outputs:
+      projects: ${{ steps.read-json.outputs.projects }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Read projects and parameters from JSON
+        id: read-json
+        run: |
+          JSON_FILE=".github/workflows/to_build.json"
+          
+          PROJECTS_JSON=$(cat "$JSON_FILE" | jq -c .)
+
+          echo "Detected projects and parameters: $PROJECTS_JSON"
+          echo "projects=$PROJECTS_JSON" >> $GITHUB_OUTPUT
+          
+  build-and-analyze:
+    needs: get-projects
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include: ${{ fromJson(needs.get-projects.outputs.projects) }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          environment-file: environment.yml
+          auto-activate-base: false
+          activate-environment: iris
+          auto-update-conda: true
+
+      - name: Set up Java ${{ matrix.java_version }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ matrix.java_version }}
+          cache: 'maven'
+
+      - name: Install Maven ${{ matrix.maven_version }}
+        if: ${{ matrix.maven_version != '' }}
+        run: |
+          MAVEN_VERSION="${{ matrix.maven_version }}"
+          MAVEN_TAR="apache-maven-${MAVEN_VERSION}-bin.tar.gz"
+          MAVEN_URL="https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/${MAVEN_TAR}"
+          MAVEN_INSTALL_DIR="/opt/maven/apache-maven-${MAVEN_VERSION}"
+
+          echo "Downloading Maven ${MAVEN_VERSION}..."
+          sudo curl -fSL "$MAVEN_URL" -o "/tmp/${MAVEN_TAR}" || { echo "Failed to download Maven!"; exit 1; }
+
+          echo "Creating Maven install directory: ${MAVEN_INSTALL_DIR}"
+          sudo mkdir -p "${MAVEN_INSTALL_DIR}"
+
+          echo "Extracting Maven to ${MAVEN_INSTALL_DIR}..."
+          sudo tar -xzf "/tmp/${MAVEN_TAR}" -C "/opt/maven/" || { echo "Failed to extract Maven!"; exit 1; }
+
+          echo "Setting MAVEN_HOME and adding to PATH..."
+          echo "MAVEN_HOME=${MAVEN_INSTALL_DIR}" >> $GITHUB_ENV
+          echo "M2_HOME=${MAVEN_INSTALL_DIR}" >> $GITHUB_ENV
+          echo "${MAVEN_INSTALL_DIR}/bin" >> $GITHUB_PATH
+
+          echo "Maven ${MAVEN_VERSION} installed to ${MAVEN_INSTALL_DIR}"
+          echo "------------------------------------------------"
+
+      - name: Install Gradle ${{ matrix.gradle_version }}
+        if: ${{ matrix.gradle_version != '' }}
+        run: |
+          GRADLE_VERSION="${{ matrix.gradle_version }}"
+          GRADLE_ZIP="gradle-${GRADLE_VERSION}-bin.zip"
+          GRADLE_URL="https://services.gradle.org/distributions/${GRADLE_ZIP}"
+          GRADLE_INSTALL_DIR="/opt/gradle/gradle-${GRADLE_VERSION}"
+
+          echo "Downloading Gradle ${GRADLE_VERSION}..."
+          sudo curl -fSL "$GRADLE_URL" -o "/tmp/${GRADLE_ZIP}" || { echo "Failed to download Gradle!"; exit 1; }
+
+          echo "Creating Gradle install directory: ${GRADLE_INSTALL_DIR}"
+          sudo mkdir -p "${GRADLE_INSTALL_DIR}"
+
+          echo "Extracting Gradle to ${GRADLE_INSTALL_DIR}..."
+          sudo unzip -q "/tmp/${GRADLE_ZIP}" -d "/opt/gradle/" || { echo "Failed to extract Gradle!"; exit 1; }
+
+          echo "Setting GRADLE_HOME and adding to PATH..."
+          echo "GRADLE_HOME=${GRADLE_INSTALL_DIR}" >> $GITHUB_ENV
+          echo "${GRADLE_INSTALL_DIR}/bin" >> $GITHUB_PATH
+
+          echo "Gradle ${GRADLE_VERSION} installed to ${GRADLE_INSTALL_DIR}"
+          echo "------------------------------------------------"
+          
+      - name: Download and Extract CodeQL Bundle
+        run: |
+          # Download the CodeQL bundle
+          curl -L https://github.com/github/codeql-action/releases/download/codeql-bundle-v2.15.0/codeql-bundle-linux64.tar.gz -o codeql-bundle.tar.gz || exit 1
+
+          # Extract the bundle
+          tar -xzf codeql-bundle.tar.gz || exit 1
+
+          # Store the absolute path to the extracted CodeQL directory in GITHUB_ENV.
+          echo "CODEQL_PATH=$(pwd)/codeql" >> $GITHUB_ENV
+
+          # Add the CodeQL executable's directory to the PATH for all subsequent steps.
+          echo "$(pwd)/codeql" >> $GITHUB_PATH
+
+      - name: Update CodeQL Query version in config
+        run: sed -i "s/^CODEQL_QUERY_VERSION = \".*\"$/CODEQL_QUERY_VERSION = \"0.8.0\"/" src/config.py
+
+      - name: Update JDK Path in dep_configs.json for ${{ matrix.java_version }}
+        run: |
+          sudo apt-get update && sudo apt-get install -y moreutils
+          CURRENT_JAVA_VERSION="${{ matrix.java_version }}"
+          JAVA_HOME_TO_USE=""
+
+          case "$CURRENT_JAVA_VERSION" in
+            "8")
+              JAVA_HOME_TO_USE="/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/8.0.452-9/x64"
+              ;;
+            "11")
+              JAVA_HOME_TO_USE="/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/11.0.23-9/x64"
+              ;;
+            "17")
+              JAVA_HOME_TO_USE="/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.11-9/x64"
+              ;;
+            *)
+              echo "Error: Unsupported Java version '$CURRENT_JAVA_VERSION'."
+              exit 1
+              ;;
+          esac
+
+          jq \
+            --arg current_java_version "$CURRENT_JAVA_VERSION" \
+            --arg java_home_path "$JAVA_HOME_TO_USE" \
+            '.jdks[$current_java_version] = $java_home_path' \
+            "dep_configs.json" | sponge "dep_configs.json"
+
+      - name: Relocate cached output for ${{ matrix.project_slug }}
+        run: |          
+          mv .github/cached_output/${{ matrix.project_slug }} output/
+
+      - name: Build project ${{ matrix.project_slug }}
+        run: |
+          echo "--- Building ${{ matrix.project_slug }} ---"
+          python scripts/fetch_and_build.py --filter ${{ matrix.project_slug }}
+          echo "--------------------------------"
+
+      - name: Generate CodeQL database for ${{ matrix.project_slug }}
+        run: |
+          echo "--- Generating CodeQL database for ${{ matrix.project_slug }} ---"
+          python scripts/build_codeql_dbs.py --project ${{ matrix.project_slug }}
+          echo "----------------------------------"
+
+      - name: Run IRIS for ${{ matrix.project_slug }} with CWE ${{ matrix.cwe }}
+        run: |
+          echo "--- Running IRIS for ${{ matrix.project_slug }} ---"
+          conda run -n iris python src/iris.py --query ${{ matrix.cwe }} --run-id test --overwrite-api-candidates --overwrite-func-param-candidates --skip-posthoc-filter ${{ matrix.project_slug }}
+          echo "--------------------"
+
+      - name: Verify output file existence
+        run: |
+          JSON_FILE="output/${{ matrix.project_slug }}/test/${{ matrix.cwe }}-final/results.json"
+          echo "Checking for .json file: $JSON_FILE"
+          if [ -f "$JSON_FILE" ]; then
+            echo ".json file found: $JSON_FILE"
+          else
+            echo "Error: .json file not found at $JSON_FILE"
+            exit 1
+          fi

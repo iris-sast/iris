@@ -1,50 +1,110 @@
-# Start with Ubuntu base image
+# Use Ubuntu 22.04 as the base image
 FROM ubuntu:22.04
 
+# Set environment variables to noninteractive (for apt-get)
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install dependencies
+# Install all system dependencies in one layer
 RUN apt-get update && apt-get install -y \
-    git wget curl python3 python3-pip unzip tar \
+    curl \
+    sudo \
+    nano \
+    software-properties-common \
+    vim \
+    git \
+    wget \
+    python3 \
+    python3-pip \
+    unzip \
+    tar \
+    apt-transport-https \
+    ca-certificates \
+    lsb-release \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Miniconda based on architecture
-RUN arch=$(uname -m) && \
-    if [ "$arch" = "x86_64" ]; then \
-        MINICONDA_URL="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"; \
-    elif [ "$arch" = "aarch64" ]; then \
-        MINICONDA_URL="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aarch64.sh"; \
+# Add OpenJDK repository and install OpenJDK versions
+RUN add-apt-repository ppa:openjdk-r/ppa \
+    && apt-get update \
+    && apt-get install -y openjdk-8-jdk openjdk-11-jdk openjdk-17-jdk \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set JAVA_HOME (defaults to JDK 17)
+ENV JAVA_HOME=/usr/lib/jvm/java-1.17.0-openjdk-amd64
+
+# Install Maven versions
+ENV MAVEN_DIR=/opt/maven
+ARG MAVEN_VERSIONS="3.2.1 3.5.0 3.9.8"
+RUN mkdir -p $MAVEN_DIR && \
+    for version in $MAVEN_VERSIONS; do \
+        wget https://archive.apache.org/dist/maven/maven-3/${version}/binaries/apache-maven-${version}-bin.tar.gz -P /tmp && \
+        tar -xzf /tmp/apache-maven-${version}-bin.tar.gz -C $MAVEN_DIR && \
+        rm /tmp/apache-maven-${version}-bin.tar.gz; \
+    done
+
+# Set default Maven version
+ENV MAVEN_HOME=$MAVEN_DIR/apache-maven-3.9.8
+ENV PATH=$MAVEN_HOME/bin:$PATH
+
+# Install Gradle versions
+ENV GRADLE_DIR=/opt/gradle
+ARG GRADLE_VERSIONS="6.8.2 7.6.4 8.9"
+RUN mkdir -p $GRADLE_DIR && \
+    for version in $GRADLE_VERSIONS; do \
+        wget -q https://services.gradle.org/distributions/gradle-${version}-bin.zip -O /tmp/gradle-${version}-bin.zip && \
+        unzip -q /tmp/gradle-${version}-bin.zip -d $GRADLE_DIR && \
+        rm /tmp/gradle-${version}-bin.zip; \
+    done
+
+# Set default Gradle version
+ENV GRADLE_HOME=$GRADLE_DIR/gradle-8.9
+ENV PATH=$GRADLE_HOME/bin:$PATH
+
+# Verify installations
+RUN java -version && mvn -version && gradle --version
+
+# Install Miniconda
+ENV CONDA_DIR=/opt/conda
+ENV PATH=$CONDA_DIR/bin:$PATH
+
+RUN ARCH=$(uname -m) && \
+    if [ "$ARCH" = "x86_64" ]; then \
+        CONDA_URL=https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh; \
+    elif [ "$ARCH" = "aarch64" ]; then \
+        CONDA_URL=https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aarch64.sh; \
     else \
-        echo "Unsupported architecture: $arch"; \
-        exit 1; \
+        echo "Unsupported architecture: $ARCH"; exit 1; \
     fi && \
-    wget $MINICONDA_URL -O miniconda.sh && \
-    bash miniconda.sh -b -p /opt/conda && \
-    rm miniconda.sh
+    wget --quiet $CONDA_URL -O /tmp/miniconda.sh && \
+    chmod +x /tmp/miniconda.sh && \
+    /tmp/miniconda.sh -b -p $CONDA_DIR && \
+    rm /tmp/miniconda.sh && \
+    conda clean -afy
 
-ENV PATH=/opt/conda/bin:$PATH
+# Verify Conda installation
+RUN conda --version
 
-WORKDIR /iris
+# Copy project files and set up environment
 COPY . /iris/
-RUN git clone https://github.com/iris-sast/cwe-bench-java.git data/cwe-bench-java
+WORKDIR /iris
 
-RUN chmod +x scripts/setup_environment.sh
-RUN bash ./scripts/setup_environment.sh
+# Create conda environment
+RUN conda env remove -n iris || true && \
+    conda env create -f environment.yml
 
-# Set up shell
+# Download and extract CodeQL directly into /iris/
+RUN curl -L -o codeql.zip https://github.com/iris-sast/iris/releases/download/codeql-0.8.3-patched/codeql.zip && \
+    unzip -qo codeql.zip -d /iris/ && \
+    rm -f codeql.zip
+
+# Add CodeQL to PATH
+ENV PATH="/iris/codeql:${PATH}"
+
+# Set up conda environment activation
 SHELL ["/bin/bash", "-c"]
-#RUN echo "conda activate $(head -1 environment.yml | cut -d' ' -f2)" >> ~/.bashrc
 RUN ENV_NAME=$(head -1 environment.yml | cut -d' ' -f2) && \
     conda init bash && \
     echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
     echo "conda activate $ENV_NAME" >> ~/.bashrc
-# Copy JDKs from build context
-COPY jdk-7u80-linux-x64.tar.gz jdk-8u202-linux-x64.tar.gz jdk-17_linux-x64_bin.tar.gz /iris/data/cwe-bench-java/java-env/
-RUN cd /iris/data/cwe-bench-java/java-env/ && \
-    tar xzf jdk-8u202-linux-x64.tar.gz --no-same-owner && \
-    tar xzf jdk-7u80-linux-x64.tar.gz --no-same-owner && \
-    tar xzf jdk-17_linux-x64_bin.tar.gz --no-same-owner && \
-    chmod -R 755 */bin */lib && \
-    chmod -R 755 */jre/bin */jre/lib && \
-    ls -la jdk-17/lib/libjli.so  # Verify the library exists and permissions
+
+# Default command (bash shell)
 CMD ["/bin/bash"]

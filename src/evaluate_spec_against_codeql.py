@@ -5,6 +5,7 @@ import yaml
 import csv
 import json
 from tqdm import tqdm
+from src.config import CODEQL_QUERY_VERSION
 
 THIS_SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 NEUROSYMSA_ROOT_DIR = os.path.abspath(f"{THIS_SCRIPT_DIR}/../../")
@@ -13,7 +14,7 @@ sys.path.append(NEUROSYMSA_ROOT_DIR)
 from src.config import CODEQL_DIR, OUTPUT_DIR
 from src.queries import QUERIES
 
-YAML_DIR = f"{CODEQL_DIR}/qlpacks/codeql/java-all/0.8.3/ext"
+YAML_DIR = f"{CODEQL_DIR}/qlpacks/codeql/java-all/{CODEQL_QUERY_VERSION}/ext"
 
 SINK_KIND = {
   "022": ["path-injection"],

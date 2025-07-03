@@ -16,10 +16,10 @@ from tqdm import tqdm
 from tqdm.contrib.concurrent import thread_map
 
 THIS_SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
-NEUROSYMSA_ROOT_DIR = os.path.abspath(f"{THIS_SCRIPT_DIR}/../../")
+NEUROSYMSA_ROOT_DIR = os.path.abspath(f"{THIS_SCRIPT_DIR}/../")
 sys.path.append(NEUROSYMSA_ROOT_DIR)
 
-from src.config import CODEQL_DIR, CODEQL_DB_PATH, OUTPUT_DIR, ALL_METHOD_INFO_DIR, PROJECT_SOURCE_CODE_DIR, CVES_MAPPED_W_COMMITS_DIR
+from src.config import CODEQL_DIR, CODEQL_DB_PATH, OUTPUT_DIR, ALL_METHOD_INFO_DIR, PROJECT_SOURCE_CODE_DIR, CVES_MAPPED_W_COMMITS_DIR, CODEQL_QUERY_VERSION, IRIS_ROOT_DIR
 
 
 from src.logger import Logger
@@ -52,7 +52,7 @@ class CodeQLSAPipeline:
         self.overwrite = overwrite
 
         # Setup logger
-        self.master_logger = Logger(f"{NEUROSYMSA_ROOT_DIR}/log")
+        self.master_logger = Logger(f"{IRIS_ROOT_DIR}/log")
 
         # Check if the query is valid
         if self.query in QUERIES:
@@ -105,7 +105,7 @@ class CodeQLSAPipeline:
             "analyze",
             self.project_codeql_db_path,
             f"--output={self.query_output_result_sarif_path}",
-            f"{CODEQL_DIR}/qlpacks/codeql/java-queries/0.8.3/{exp}Security/CWE/CWE-{self.cwe_id}/"
+            f"{CODEQL_DIR}/qlpacks/codeql/java-queries/{CODEQL_QUERY_VERSION}/{exp}Security/CWE/CWE-{self.cwe_id}/"
         ]
 
         if self.overwrite:

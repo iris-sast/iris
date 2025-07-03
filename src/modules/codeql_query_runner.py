@@ -11,11 +11,11 @@ import copy
 import math
 import random
 
-from src.config import CODEQL_DIR 
+from src.config import CODEQL_DIR, CODEQL_QUERY_VERSION
 from src.queries import QUERIES
 
 CODEQL = f"{CODEQL_DIR}/codeql"
-CODEQL_CUSTOM_QUERY_DIR = f"{CODEQL_DIR}/qlpacks/codeql/java-queries/0.8.3/myqueries"
+CODEQL_CUSTOM_QUERY_DIR = f"{CODEQL_DIR}/qlpacks/codeql/java-queries/{CODEQL_QUERY_VERSION}/myqueries"
 
 ENTRY_SCRIPT_DIR = os.path.abspath(os.path.dirname(os.path.realpath(__file__)) + "/../")
 

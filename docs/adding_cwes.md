@@ -118,4 +118,4 @@ For the examples, you will need to provide sources and sinks. A CodeQL source is
 
 6. Add a hint related to CWE for contextual analysis prompt in [`prompts.py`](../src/prompts.py). Hints are stored in `POSTHOC_FILTER_HINTS`. The key should be the CWE number and the value include sentences that describe extra details to look out for when detecting the CWE. Sites that have definitions for the CWE will often have more specific guidance on the CWE.
 
-6. Test out the query. You can provide the --test-run parameter when running `neusym_vul.py` to see if the CodeQL queries compile. Afterwards, you can try a test run with a small model on one of the Java projects associated with the CWE. The [GitHub Advisory Database](https://github.com/advisories) is an easy way to find a vulnerable project given the CWE.
+6. Test out the query. You can provide the --test-run parameter when running `iris.py` to see if the CodeQL queries compile. Afterwards, you can try a test run with a small model on one of the Java projects associated with the CWE. The [GitHub Advisory Database](https://github.com/advisories) is an easy way to find a vulnerable project given the CWE.

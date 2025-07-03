@@ -12,3 +12,4 @@ dependencies:
   - accelerate
   - transformers
   - pytorch=2.5
+  - google-generativeai

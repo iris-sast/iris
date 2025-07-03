@@ -1,0 +1,9 @@
+[
+  {
+    "project_slug": "perwendel__spark_CVE-2018-9159_2.7.1",
+    "java_version": "8",
+    "maven_version": "3.5.0",
+    "gradle_version": "",
+    "cwe": "cwe-022wLLM"
+  }
+]

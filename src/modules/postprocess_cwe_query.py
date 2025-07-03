@@ -11,10 +11,10 @@ import copy
 import math
 import random
 
-from src.config import CODEQL_DIR 
+from src.config import CODEQL_DIR, CODEQL_QUERY_VERSION
 
 CODEQL = f"{CODEQL_DIR}/codeql"
-CODEQL_CUSTOM_QUERY_DIR = f"{CODEQL_DIR}/qlpacks/codeql/java-queries/0.8.3/myqueries"
+CODEQL_CUSTOM_QUERY_DIR = f"{CODEQL_DIR}/qlpacks/codeql/java-queries/{CODEQL_QUERY_VERSION}/myqueries"
 
 class CWEQueryResultPostprocessor:
     def __init__(self):
