@@ -1,0 +1,10 @@
+[book]
+title = "IRIS Documentation"
+authors = ["IRIS Team"]
+description = "Documentation for IRIS - A neurosymbolic framework combining LLMs with static analysis for security vulnerability detection"
+language = "en"
+src = "docs"
+
+[output.html]
+git-repository-url = "https://github.com/iris-sast/iris"
+
