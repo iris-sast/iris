@@ -1,5 +1,5 @@
 ## Citation 
-Consider citing our paper:
+Consider citing our ICLR'25 paper:
 ```
 @inproceedings{li2025iris,
 title={LLM-Assisted Static Analysis for Detecting Security Vulnerabilities},
