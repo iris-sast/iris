@@ -16,8 +16,8 @@ from tqdm import tqdm
 from tqdm.contrib.concurrent import thread_map
 
 THIS_SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
-NEUROSYMSA_ROOT_DIR = os.path.abspath(f"{THIS_SCRIPT_DIR}/../")
-sys.path.append(NEUROSYMSA_ROOT_DIR)
+IRIS_ROOT_DIR = os.path.abspath(f"{THIS_SCRIPT_DIR}/../")
+sys.path.append(IRIS_ROOT_DIR)
 
 from src.config import CODEQL_DIR, CODEQL_DB_PATH, PACKAGE_MODULES_PATH, OUTPUT_DIR, ALL_METHOD_INFO_DIR, PROJECT_SOURCE_CODE_DIR, CVES_MAPPED_W_COMMITS_DIR, CODEQL_QUERY_VERSION
 
@@ -130,7 +130,7 @@ class SAPipeline:
 
         # Setup logger
         if not self.no_logger:
-            self.master_logger = Logger(f"{NEUROSYMSA_ROOT_DIR}/log")
+            self.master_logger = Logger(f"{IRIS_ROOT_DIR}/log")
 
         # Check if the query is valid
         if self.query in QUERIES:
