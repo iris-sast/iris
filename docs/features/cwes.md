@@ -1,7 +1,7 @@
 ## Supported CWEs
 Here are the following CWEs supported, that you can specify as an argument to `--query` when using `src/iris.py`. 
 
-- `cwe-022wLLM` - [CWE-022](https://cwe.mitre.org/data/definitions/22.html) (Path Traversal)
+- `cwe-022wLLM` - [CWE-022](../src/cwe-queries/cwe-022) (Path Traversal)
 - `cwe-078wLLM` - [CWE-078](https://cwe.mitre.org/data/definitions/78.html) (OS Command Injection)
 - `cwe-079wLLM` - [CWE-079](https://cwe.mitre.org/data/definitions/79.html) (Cross-Site Scripting)
 - `cwe-089wLLM` - [CWE-089](https://cwe.mitre.org/data/definitions/89.html) (SQL Injection)
