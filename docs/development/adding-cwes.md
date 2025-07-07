@@ -16,6 +16,7 @@ cwe-*
 2. We recommend using CodeQL's CWE queries for examples. You can find CodeQL's CWE queries in the [CodeQL github repository](https://github.com/github/codeql). In `java/ql/src/Security/CWE`, locate the CWE you're interested in adding. Within each CWE directory, locate the `.ql` file. Often there are multiple `.ql` files - a quick heuristic is to pick the `.ql` file with the most general name, and most similar to the CWE name. 
 
 For example - [CWE-022](https://cwe.mitre.org/data/definitions/22.html) has `TaintedPath.ql` and `ZipSlip.ql`. We used `TaintedPath.ql`. 
+
 3. Once you've found the corresponding `.ql` file for the CWE - make note of this file. This will be the wrapper query. Within the file, there should be an import statement that refers to the module related to the CWE. Often it will be prefixed with `semmle.code.java.security` and end with `Query`. Within the CodeQL repository, find the module in `codeql/java/ql/lib/semmle/code/java/security`. 
 4. Within the `cwe-queries` directory of iris, create a new folder titled `cwe-[CWE number]`. Within the folder copy the `.ql` and the `.qll` files. Rename them with the prefix `My`. Within the `.qll` file - there may be multiple modules suffixed with `Config`. Find the Config that includes the `.qll` name in it - - this is where the source and sink predicates are defined. 
 
