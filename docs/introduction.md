@@ -6,7 +6,7 @@ IRIS is a neurosymbolic framework that combines LLMs with static analysis for se
 
 At a high level, IRIS takes a project and a CWE (vulnerability class, such as path traversal vulnerability or CWE-22) as input, statically analyzes the project, and outputs a set of potential vulnerabilities (of type CWE) in the project.
 
-![iris workflow](iris_arch.png)
+![iris workflow](assets/iris_arch.png)
 
 ### Key Features
 
