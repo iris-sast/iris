@@ -17,6 +17,7 @@
 # Features
 - [Supported CWEs](features/cwes.md)
 - [Supported Models](features/models.md)
+- [Visualizer](features/visualizer.md)
   
 # Development
 - [Adding CWEs](development/adding-cwes.md)
