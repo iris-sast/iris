@@ -122,7 +122,7 @@ apache__camel_CVE-2018-8041_2.20.3,success,8,3.5.0,n/a,n/a
 jeecgboot__jeecgboot_CVE-2022-45206_3.4.3,success,8,3.5.0,n/a,n/a
 folio-org__spring-module-core_CVE-2022-4963_2.0.0,success,17,3.5.0,n/a,n/a
 apache__kylin_CVE-2024-48944_5.0.0,success,8,3.5.0,n/a,n/a
-apache__axis-axis1-java_CVE-2023-51441,success,8,3.5.0,n/a,n/a
+apache__axis-axis1-java_CVE-2023-51441_1.3.0,success,8,3.5.0,n/a,n/a
 apache__kafka_CVE-2025-27818_3.9.0,success,8,n/a,n/a,1
 crate__crate_5.5.1_CVE-2023-51982_5.5.1,success,17,3.9.8,n/a,n/a
 mapfish__mapfish-print_CVE-2020-15231_3.22.0,success,8,n/a,n/a,1
