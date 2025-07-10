@@ -1,6 +1,6 @@
 ## Workflow
 
-At a high level, IRIS takes a project and a CWE (vulnerability class, such as path traversal vulnerability or CWE-22) as input, statically analyzes the project, and outputs a set of potential vulnerabilities (of type CWE) in the project. To achieve this, IRIS takes the following steps:
+IRIS accepts a codebase and a CWE (Common Weakness Enumeration) as input, and uses a neurosymbolic approach to identify security vulnerabilities of type CWE in the project. To acheieve this, IRIS uses the following steps:
 
 ![iris workflow](../assets/iris_arch.png)
 
