@@ -8,6 +8,8 @@ IRIS is a collaborative effort between researchers at the University of Pennsylv
 
 [Derin Gezgin](https://deringezgin.github.io/), Connecticut College
 
+[Zhengdong (Forest) Huang](https://github.com/FrostyHec), SUSTech
+
 [Nevena Stojkovic](https://www.linkedin.com/in/nevena-stojkovic-3b7a69335), MIT
 
 [Ziyang Li](https://liby99.github.io), Johns Hopkins University, previously PhD student at UPenn
