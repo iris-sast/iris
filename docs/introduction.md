@@ -23,6 +23,7 @@ To get started with IRIS:
 1. Check out the [Environment Setup](environment-setup/docker.md) guide
 2. Follow our [Quickstart](quickstart.md) tutorial
 3. Learn about [Supported CWEs](features/cwes.md) and [Models](features/models.md)
+4. If you are interested in contributing, read our [Guidelines](development/contributing.md)
 
 ### Resources
 
