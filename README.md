@@ -11,8 +11,17 @@ Code and data for the following works can be found in the v1 branch:
 * [ICLR 2025] <a href="https://arxiv.org/pdf/2405.17238">IRIS: LLM-ASSISTED STATIC ANALYSIS FOR DETECTING SECURITY VULNERABILITIES</a>
 
 ## 👋 Overview
+### IRIS
 IRIS is a neurosymbolic framework that combines LLMs with static analysis for security vulnerability detection. IRIS uses LLMs to generate source and sink specifications and to filter false positive vulnerable paths.
 At a high level, IRIS takes a project and a CWE (vulnerability class, such as path traversal vulnerability or CWE-22) as input, statically analyzes the project, and outputs a set of potential vulnerabilities (of type CWE) in the project.
+
+![iris workflow](docs/assets/iris_arch.png)
+
+### CWE-Bench-Java
+This repository also contains the dataset CWE-Bench-Java, presented in the paper [LLM-Assisted Static Analysis for Detecting Security Vulnerabilities](https://arxiv.org/abs/2405.17238).
+At a high level, this dataset contains 120 CVEs spanning 4 CWEs, namely path-traversal, OS-command injection, cross-site scripting, and code-injection. Each CVE includes the buggy and fixed source code of the project, along with the information of the fixed files and functions. We provide the seed information in this repository, and we provide scripts for fetching, patching, and building the repositories. The dataset collection process is illustrated in the figure below:
+
+![cwe-bench graphic](docs/assets/dataset-collection.png)
 
 ## 🚀 Set Up
 ### Using Docker (Recommended)
