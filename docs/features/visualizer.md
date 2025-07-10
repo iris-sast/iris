@@ -2,6 +2,8 @@
 
 A web-based visualizer for IRIS static analysis results stored in SARIF format.
 
+![iris visualizer](../assets/visualizer.png)
+
 ## Features
 
 - Interactive visualization of IRIS analysis results
