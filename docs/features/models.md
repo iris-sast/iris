@@ -30,6 +30,7 @@ We support the following models with our models API wrapper (found in `src/model
 - `deepseekcoder-v2-15b`
 
 ### Gemini
+- All Gemini models are supported, including those below, other model names can be found in the Gemini API documentation. 
 - `gemini-1.5-pro`
 - `gemini-1.5-flash`
 - `gemini-pro`
