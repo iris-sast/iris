@@ -7,8 +7,7 @@
 
 ---
 
-⚠️ Code and data for the following works can be found in the v1 branch:
-* [ICLR 2025] <a href="https://arxiv.org/pdf/2405.17238">IRIS: LLM-ASSISTED STATIC ANALYSIS FOR DETECTING SECURITY VULNERABILITIES</a>
+⚠️ Code and data for the [ICLR 2025 Paper](https://arxiv.org/pdf/2405.17238) can be found in the v1 branch, license and citation below.
 
 ## 👋 Overview
 ### IRIS
