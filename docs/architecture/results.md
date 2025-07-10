@@ -1,5 +1,7 @@
 ## Results
 
+**These results are from the ICLR 2025 version of IRIS, and do not include newly added CWEs/ projects.**
+
 Results on the effectiveness of IRIS across 121 projects and 9 LLMs can be found at `/results`. Each model has a unique CSV file, with the following structure as an example.
 
 | CWE ID | CVE | Author | Package | Tag | Recall | Alerts | Paths | TP Alerts | TP Paths | Precision | F1 |
