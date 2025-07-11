@@ -115,21 +115,21 @@ If you would like to contribute, please either file a new pull request or issue.
 
 IRIS is a collaborative effort between researchers at the University of Pennsylvania and Cornell University. Please reach out to us if you have questions about IRIS.
 
-[Claire Wang](https://clairewang.net), UPenn
+[Claire Wang](https://clairewang.net), University of Pennsylvania
 
 [Amartya Das](https://github.com/IcebladeLabs), Ward Melville High School
 
 [Derin Gezgin](https://deringezgin.github.io/), Connecticut College
 
-[Zhengdong (Forest) Huang](https://github.com/FrostyHec), SUSTech
+[Zhengdong (Forest) Huang](https://github.com/FrostyHec), Southern University of Science and Technology
 
-[Nevena Stojkovic](https://www.linkedin.com/in/nevena-stojkovic-3b7a69335), MIT
+[Nevena Stojkovic](https://www.linkedin.com/in/nevena-stojkovic-3b7a69335), Massachusetts Institute of Technology
 
-[Ziyang Li](https://liby99.github.io), Johns Hopkins University, previously PhD student at UPenn
+[Ziyang Li](https://liby99.github.io), Johns Hopkins University, previously PhD student at the University of Pennsylvania
 
-[Saikat Dutta](https://www.cs.cornell.edu/~saikatd), Cornell
+[Saikat Dutta](https://www.cs.cornell.edu/~saikatd), Cornell University
 
-[Mayur Naik](https://www.cis.upenn.edu/~mhnaik), UPenn
+[Mayur Naik](https://www.cis.upenn.edu/~mhnaik), University of Pennsylvania
 
 <img src="https://github.com/user-attachments/assets/37969a67-a3fd-4b4f-9be4-dfeed28d2b48" width="175" height="175" alt="Cornell University" />
 
