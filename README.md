@@ -89,9 +89,48 @@ export PATH="$PWD/codeql:$PATH"
 
 **Note:** Also adjust the environment variable `CODEQL_QUERY_VERSION` in `src/config.py` according to the instructions therein. For instance, for CodeQL v2.15.0, this should be `0.8.0`.
 
+### Visualizer
+
+IRIS comes with a visualizer to view the SARIF output files. More detailed instructions can be found in the [docs](https://iris-sast.github.io/iris/features/visualizer.html).
+
+![iris visualizer](docs/assets/visualizer.png)
+
+#### Usage:
+
+1. **Configure paths**: Edit `config.json` to point to your outputs and source directories
+2. **Start the server**: Run `python3 server.py`
+3. **Open in browser**: Navigate to `http://localhost:8000`
+4. **Select a project**: Choose a project from the dropdown to load its analysis results
+5. **Filter and explore**: Use the CWE and model filters to explore specific vulnerabilities
+
+
 ## 💫 Contributions
 We welcome any contributions, pull requests, or issues!
 If you would like to contribute, please either file a new pull request or issue. We'll be sure to follow up shortly!
+
+## 🤝 Our Team
+
+IRIS is a collaborative effort between researchers at the University of Pennsylvania and Cornell University. Please reach out to us if you have questions about IRIS.
+
+[Claire Wang](https://clairewang.net), UPenn
+
+[Amartya Das](https://github.com/IcebladeLabs), Ward Melville High School
+
+[Derin Gezgin](https://deringezgin.github.io/), Connecticut College
+
+[Zhengdong (Forest) Huang](https://github.com/FrostyHec), SUSTech
+
+[Nevena Stojkovic](https://www.linkedin.com/in/nevena-stojkovic-3b7a69335), MIT
+
+[Ziyang Li](https://liby99.github.io), Johns Hopkins University, previously PhD student at UPenn
+
+[Saikat Dutta](https://www.cs.cornell.edu/~saikatd), Cornell
+
+[Mayur Naik](https://www.cis.upenn.edu/~mhnaik), UPenn
+
+<img src="https://github.com/user-attachments/assets/37969a67-a3fd-4b4f-9be4-dfeed28d2b48" width="175" height="175" alt="Cornell University" />
+
+<img src="https://github.com/user-attachments/assets/362abdfb-4ca4-46b2-b003-b185ce4d20af" width="300" height="200" alt="University of Pennsylvania"/>
 
 ## ✍️ Citation & license
 MIT license. Check `LICENSE.md`.
