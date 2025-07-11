@@ -9,6 +9,9 @@
 
 ⚠️ Code and data for the [ICLR 2025 Paper](https://arxiv.org/pdf/2405.17238) can be found in the v1 branch, license and citation below.
 
+## 📰 News
+* **[Jul. 10, 2025]**: IRIS v2 released, added support for 7 new CWEs.
+
 ## 👋 Overview
 ### IRIS
 IRIS is a neurosymbolic framework that combines LLMs with static analysis for security vulnerability detection. IRIS uses LLMs to generate source and sink specifications and to filter false positive vulnerable paths.
