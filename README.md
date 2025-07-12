@@ -113,7 +113,7 @@ If you would like to contribute, please either file a new pull request or issue.
 
 ## 🤝 Our Team
 
-IRIS is a collaborative effort between researchers at the University of Pennsylvania and Cornell University. Please reach out to us if you have questions about IRIS.
+IRIS is a collaborative effort between researchers at Cornell University and the University of Pennsylvania. Please reach out to us if you have questions about IRIS.
 
 [Claire Wang](https://clairewang.net), University of Pennsylvania
 
