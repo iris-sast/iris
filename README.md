@@ -115,6 +115,8 @@ If you would like to contribute, please either file a new pull request or issue.
 
 IRIS is a collaborative effort between researchers at Cornell University and the University of Pennsylvania. Please reach out to us if you have questions about IRIS.
 
+### Students
+
 [Claire Wang](https://clairewang.net), University of Pennsylvania
 
 [Amartya Das](https://github.com/IcebladeLabs), Ward Melville High School
@@ -124,6 +126,8 @@ IRIS is a collaborative effort between researchers at Cornell University and the
 [Zhengdong (Forest) Huang](https://github.com/FrostyHec), Southern University of Science and Technology
 
 [Nevena Stojkovic](https://www.linkedin.com/in/nevena-stojkovic-3b7a69335), Massachusetts Institute of Technology
+
+### Faculty
 
 [Ziyang Li](https://liby99.github.io), Johns Hopkins University, previously PhD student at the University of Pennsylvania
 
