@@ -67,7 +67,6 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java_version }}
-          cache: 'maven'
 
       - name: Install Maven ${{ matrix.maven_version }}
         if: ${{ matrix.maven_version != '' }}
@@ -165,6 +164,7 @@ jobs:
 
       - name: Relocate cached output for ${{ matrix.project_slug }}
         run: |          
+          mkdir output
           mv .github/cached_output/${{ matrix.project_slug }} output/
 
       - name: Build project ${{ matrix.project_slug }}
