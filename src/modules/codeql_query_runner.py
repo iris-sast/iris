@@ -11,7 +11,7 @@ import copy
 import math
 import random
 
-from src.config import CODEQL_DIR, CODEQL_QUERY_VERSION
+from src.config import CODEQL_DIR
 from src.queries import QUERIES
 
 CODEQL = f"{CODEQL_DIR}/codeql"
@@ -20,10 +20,9 @@ CODEQL_CUSTOM_QUERY_DIR = f"{CODEQL_DIR}/qlpacks/codeql/java-queries/{CODEQL_QUE
 ENTRY_SCRIPT_DIR = os.path.abspath(os.path.dirname(os.path.realpath(__file__)) + "/../")
 
 class CodeQLQueryRunner:
-    def __init__(self, project_name, project_output_path, project_codeql_db_path, project_logger):
-        self.project_name = project_name
-        self.project_codeql_db_path = project_codeql_db_path
+    def __init__(self, project_output_path, project_codeql_db_path, project_logger):
         self.project_output_path = project_output_path
+        self.project_codeql_db_path = project_codeql_db_path
         self.project_logger = project_logger
 
     def run(self, query, target_csv_path=None, suffix=None, dyn_queries={}):
@@ -40,7 +39,7 @@ class CodeQLQueryRunner:
 
         # 1. Create the directory in CodeQL's queries path
         suffix_dir = "" if suffix is None else f"/{suffix}"
-        codeql_query_dir = f"{CODEQL_CUSTOM_QUERY_DIR}/{self.project_name}/{query}{suffix_dir}"
+        codeql_query_dir = f"{self.project_output_path}/myqueries/{query}{suffix_dir}"
         os.makedirs(codeql_query_dir, exist_ok=True)
 
         # 2. Copy the basic queries and supporting queries to the codeql directory
