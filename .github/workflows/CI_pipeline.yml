@@ -164,8 +164,11 @@ jobs:
 
       - name: Relocate cached output for ${{ matrix.project_slug }}
         run: |          
-          mkdir output
-          mv .github/cached_output/${{ matrix.project_slug }} output/
+          mkdir output/${{ matrix.project_slug }}/test/analysis/${{ matrix.cwe }}
+          mv .github/cached_output/${{ matrix.project_slug }}/test/common/llm_labelled_source_func_params.json output/${{ matrix.project_slug }}/test/analysis/${{ matrix.cwe }}
+          mv .github/cached_output/${{ matrix.project_slug }}/test/cwe-022/llm_labelled_sink_apis.json output/${{ matrix.project_slug }}/test/analysis/${{ matrix.cwe }}
+          mv .github/cached_output/${{ matrix.project_slug }}/test/cwe-022/llm_labelled_source_apis.json output/${{ matrix.project_slug }}/test/analysis/${{ matrix.cwe }}
+          mv .github/cached_output/${{ matrix.project_slug }}/test/cwe-022/llm_labelled_taint_prop_apis.json output/${{ matrix.project_slug }}/test/analysis/${{ matrix.cwe }}
 
       - name: Build project ${{ matrix.project_slug }}
         run: |
