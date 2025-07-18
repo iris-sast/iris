@@ -82,7 +82,9 @@ RUN ARCH=$(uname -m) && \
 
 # Verify Conda installation
 RUN conda --version
-    conda tos accept
+
+# Accept Conda TOS (Feature added 7/15/2025)
+RUN conda tos accept
     
 # Copy project files and set up environment
 COPY . /iris/
