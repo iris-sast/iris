@@ -11,7 +11,8 @@ on:
 jobs:
   verify-docker:
     runs-on: ubuntu-latest
-
+    env:
+      CONDA_PLUGINS_AUTO_ACCEPT_TOS: true
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
