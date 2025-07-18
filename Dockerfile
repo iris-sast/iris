@@ -82,7 +82,8 @@ RUN ARCH=$(uname -m) && \
 
 # Verify Conda installation
 RUN conda --version
-
+    conda tos accept
+    
 # Copy project files and set up environment
 COPY . /iris/
 WORKDIR /iris
