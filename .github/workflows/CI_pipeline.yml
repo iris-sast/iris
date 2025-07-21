@@ -63,7 +63,7 @@ jobs:
           activate-environment: iris
           auto-update-conda: true
 
-      - name: Set up Java ${{ matrix.java_version }}
+      - name: Set up Java version ${{ matrix.java_version }}
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
