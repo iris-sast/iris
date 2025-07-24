@@ -90,8 +90,6 @@ Lastly, add the path of this executable to your `PATH` environment variable:
 export PATH="$PWD/codeql:$PATH"
 ```
 
-**Note:** Also adjust the environment variable `CODEQL_QUERY_VERSION` in `src/config.py` according to the instructions therein. For instance, for CodeQL v2.15.0, this should be `0.8.0`.
-
 ### Visualizer
 
 IRIS comes with a visualizer to view the SARIF output files. More detailed instructions can be found in the [docs](https://iris-sast.github.io/iris/features/visualizer.html).
