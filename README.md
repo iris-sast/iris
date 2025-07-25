@@ -90,8 +90,6 @@ Lastly, add the path of this executable to your `PATH` environment variable:
 export PATH="$PWD/codeql:$PATH"
 ```
 
-**Note:** Also adjust the environment variable `CODEQL_QUERY_VERSION` in `src/config.py` according to the instructions therein. For instance, for CodeQL v2.15.0, this should be `0.8.0`.
-
 ### Visualizer
 
 IRIS comes with a visualizer to view the SARIF output files. More detailed instructions can be found in the [docs](https://iris-sast.github.io/iris/features/visualizer.html).
@@ -106,6 +104,24 @@ IRIS comes with a visualizer to view the SARIF output files. More detailed instr
 4. **Select a project**: Choose a project from the dropdown to load its analysis results
 5. **Filter and explore**: Use the CWE and model filters to explore specific vulnerabilities
 
+## ⚡ Quickstart
+
+Make sure you have followed all of the environment setup instructions before proceeding!
+
+To quickly try IRIS on the example project `perwendel__spark_CVE-2018-9159_2.7.1`, run the following commands:
+
+```sh
+# Build the project
+python scripts/fetch_and_build.py --filter perwendel__spark_CVE-2018-9159_2.7.1
+
+# Generate the CodeQL database
+python scripts/build_codeql_dbs.py --project perwendel__spark_CVE-2018-9159_2.7.1
+
+# Run IRIS analysis
+python src/iris.py --query cwe-022wLLM --run-id test --llm qwen2.5-coder-7b perwendel__spark_CVE-2018-9159_2.7.1
+```
+
+This will build the project, generate the CodeQL database, and analyze it for CWE-022 vulnerabilities using the specified LLM (qwen2.5-coder-7b). The output of these three steps will be stored under `data/build-info/`, `data/codeql-dbs/`, and `output/` respectively.
 
 ## 💫 Contributions
 We welcome any contributions, pull requests, or issues!

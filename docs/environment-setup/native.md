@@ -56,5 +56,3 @@ Lastly, add the path of this executable to your `PATH` environment variable:
 ```sh
 export PATH="$PWD/codeql:$PATH"
 ```
-
-**Note:** Also adjust the environment variable `CODEQL_QUERY_VERSION` in `src/config.py` according to the instructions therein. For instance, for CodeQL v2.15.0, this should be `0.8.0`.

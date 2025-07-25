@@ -291,10 +291,25 @@ class ContextualAnalysisPipeline:
 
     def parse_posthoc_filter_json_result(self, json_str):
         try:
+            # Remove markdown code block markers if present
+            json_str = re.sub(r'```json\s*', '', json_str)
+            json_str = re.sub(r'```\s*$', '', json_str)
+
+            # Handle escaped single quotes which are invalid in JSON
+            json_str = json_str.replace("\\'", "'")
+
+            # Original cleanup
             json_str = json_str.replace("\\n", "").replace("\\\n", "")
             json_str = re.sub("//.*", "", json_str)
             json_str = re.sub("\"\"", "\"", json_str)
-            result = json.loads(re.findall(r"\{[\s\S]*\}", json_str)[0])
+
+            # Extract JSON object
+            json_match = re.findall(r"\{[\s\S]*\}", json_str)
+            if not json_match:
+                self.project_logger.error(f"    ==> No JSON object found in response")
+                return {}
+
+            result = json.loads(json_match[0])
             if type(result) == dict:
                 if "is_vulnerable" in result: result["is_vulnerable"] = self.parse_boolean(result["is_vulnerable"])
                 if "source_is_false_positive" in result: result["source_is_false_positive"] = self.parse_boolean(result["source_is_false_positive"])
@@ -304,6 +319,8 @@ class ContextualAnalysisPipeline:
                 return {}
         except Exception as e:
             self.project_logger.error(f"    ==> Error parsing JSON: {e}")
+            # Log the problematic JSON string for debugging
+            self.project_logger.error(f"    ==> Problematic JSON string: {repr(json_str[:500])}")
             return {}
 
     def query_gpt_on_posthoc_filter_prompt(self, result_id, code_flow_id, path_user_prompt):

@@ -41,8 +41,6 @@ from src.modules.evaluation_pipeline import EvaluationPipeline
 from src.models.llm import LLM
 
 CODEQL = f"{CODEQL_DIR}/codeql"
-CODEQL_CUSTOM_QUERY_DIR = f"{CODEQL_DIR}/qlpacks/codeql/java-queries/{CODEQL_QUERY_VERSION}/myqueries"
-CODEQL_CUSTOM_YML_DIR = f"{CODEQL_DIR}/qlpacks/codeql/java-queries/{CODEQL_QUERY_VERSION}/.codeql/libraries/codeql/java-all/{CODEQL_QUERY_VERSION}/ext"
 
 PRIMITIVE_TYPES = set([
     "void",
@@ -178,35 +176,50 @@ class SAPipeline:
                 self.master_logger.error(f"==> Cannot find CodeQL database for {self.project_name}; aborting")
             raise Exception(f"Cannot find CodeQL database for {self.project_codeql_db_path}; aborting")
 
-        # Setup cwe output path
-        self.cwe_output_path = f"{self.project_output_path}/cwe-{self.cwe_id}"
-        os.makedirs(self.cwe_output_path, exist_ok=True)
-        self.common_output_path = f"{self.project_output_path}/common"
-        os.makedirs(self.common_output_path, exist_ok=True)
+        # Setup consolidated analysis directory with common/ and cwe-{query}/ subdirectories
+        self.analysis_output_path = f"{self.project_output_path}/analysis"
+        self.analysis_common_path = f"{self.analysis_output_path}/common"
+        self.analysis_cwe_path = f"{self.analysis_output_path}/{self.query}"
+        os.makedirs(self.analysis_common_path, exist_ok=True)
+        os.makedirs(self.analysis_cwe_path, exist_ok=True)
 
-        # Path towards candidate APIs CSV files
-        self.external_apis_csv_path = f"{self.cwe_output_path}/external_apis.csv"
-        self.candidate_apis_csv_path = f"{self.cwe_output_path}/candidate_apis.csv"
-        self.llm_labelled_sink_apis_path = f"{self.cwe_output_path}/llm_labelled_sink_apis.json"
-        self.llm_labelled_source_apis_path = f"{self.cwe_output_path}/llm_labelled_source_apis.json"
-        self.llm_labelled_taint_prop_apis_path = f"{self.cwe_output_path}/llm_labelled_taint_prop_apis.json"
+        # Setup custom CodeQL qlpack structure
+        self.custom_codeql_root = f"{self.project_output_path}/myqueries"
 
-        # Path towards candidate func params CSV files
-        self.func_param_path = f"{self.common_output_path}/func_params.csv"
-        self.source_func_param_candidates_path = f"{self.common_output_path}/source_func_param_candidates.csv"
-        self.llm_labelled_source_func_params_path = f"{self.common_output_path}/llm_labelled_source_func_params.json"
+        # Create qlpack.yml for the custom package
+        self._create_custom_qlpack_yml()
 
-        # LLM related log paths
-        self.label_api_log_path = f"{self.cwe_output_path}/logs/label_apis"
-        self.label_func_params_log_path = f"{self.common_output_path}/logs/label_func_params"
+        # Path towards external APIs (fetch query results in old structure)
+        self.external_apis_csv_path = f"{self.project_output_path}/fetch_external_apis/results.csv"
+        self.candidate_apis_csv_path = f"{self.analysis_common_path}/candidate_apis.csv"
+
+        # Path towards function parameters (fetch query results in old structure)
+        self.func_param_path = f"{self.project_output_path}/fetch_func_params/results.csv"
+        self.source_func_param_candidates_path = f"{self.analysis_common_path}/source_func_param_candidates.csv"
+
+        # Function and Class locations (fetch query results in old structure)
+        self.func_locs_path = f"{self.project_output_path}/fetch_func_locs/results.csv"
+        self.class_locs_path = f"{self.project_output_path}/fetch_class_locs/results.csv"
+
+        # LLM labelled results (CWE-specific analysis data)
+        self.llm_labelled_sink_apis_path = f"{self.analysis_cwe_path}/llm_labelled_sink_apis.json"
+        self.llm_labelled_source_apis_path = f"{self.analysis_cwe_path}/llm_labelled_source_apis.json"
+        self.llm_labelled_taint_prop_apis_path = f"{self.analysis_cwe_path}/llm_labelled_taint_prop_apis.json"
+        self.llm_labelled_source_func_params_path = f"{self.analysis_cwe_path}/llm_labelled_source_func_params.json"
+
+        # LLM related log paths (CWE-specific)
+        self.label_api_log_path = f"{self.analysis_cwe_path}/logs/label_apis"
+        self.label_func_params_log_path = f"{self.analysis_cwe_path}/logs/label_func_params"
         os.makedirs(self.label_api_log_path, exist_ok=True)
         os.makedirs(self.label_func_params_log_path, exist_ok=True)
 
-        # CodeQL queries temporary path
-        self.source_qll_path = f"{self.cwe_output_path}/MySources.qll"
-        self.summary_qll_path = f"{self.cwe_output_path}/MySummaries.qll"
-        self.sink_qll_path = f"{self.cwe_output_path}/MySinks.qll"
-        self.spec_yml_path = f"{self.cwe_output_path}/Spec.yml"
+        # CodeQL queries paths - generate files directly in final destination
+        cwe_query_dir = f"{self.custom_codeql_root}/{self.query}"
+
+        self.source_qll_path = f"{cwe_query_dir}/MySources.qll"
+        self.summary_qll_path = f"{cwe_query_dir}/MySummaries.qll"
+        self.sink_qll_path = f"{cwe_query_dir}/MySinks.qll"
+        self.spec_yml_path = f"{cwe_query_dir}/specs.model.yml"
 
         # Setup query output path
         self.query_output_path = f"{self.project_output_path}/{self.query}"
@@ -229,10 +242,6 @@ class SAPipeline:
         os.makedirs(self.final_output_path, exist_ok=True)
         self.final_output_json_path = f"{self.final_output_path}/results.json"
 
-        # Function and Class locations
-        self.func_locs_path = f"{self.project_output_path}/fetch_func_locs/results.csv"
-        self.class_locs_path = f"{self.project_output_path}/fetch_class_locs/results.csv"
-
         # Create logger
         if not self.no_logger:
             self.project_logging_directory = f"{self.project_output_path}/log"
@@ -249,13 +258,27 @@ class SAPipeline:
         self.api_labels_cache_path = f"{self.common_cache_path}/api_labels_{self.llm}.json"
         self.model = None
 
+    def _create_custom_qlpack_yml(self):
+        """Create qlpack.yml for the custom CodeQL package"""
+        qlpack_content = f"""
+name: iris
+version: 1.0.0
+dependencies:
+  codeql/java-all: "*"
+  codeql/java-queries: "*"
+"""
+        qlpack_path = f"{self.custom_codeql_root}/qlpack.yml"
+        os.makedirs(self.custom_codeql_root, exist_ok=True)
+        with open(qlpack_path, 'w') as f:
+            f.write(qlpack_content)
+            
     def get_model(self):
         if self.model is None:
             self.model = LLM.get_llm(model_name=self.llm, logger=self.project_logger, kwargs={"seed": self.seed, "max_new_tokens": 2048})
         return self.model
 
     def run_simple_codeql_query(self, query, target_csv_path=None, suffix=None, dyn_queries={}):
-        runner = CodeQLQueryRunner(self.project_name, self.project_output_path, self.project_codeql_db_path, self.project_logger)
+        runner = CodeQLQueryRunner(self.project_output_path, self.project_codeql_db_path, self.project_logger)
         runner.run(query, target_csv_path, suffix, dyn_queries)
 
     def keep_external_packages(self, api_candidates_df):
@@ -320,7 +343,7 @@ class SAPipeline:
         # 1. Invoke CodeQL to extract the external APIs
         if not os.path.exists(self.external_apis_csv_path) or self.overwrite or self.overwrite_api_candidates:
             self.project_logger.info("  ==> Extracting all external APIs by running CodeQL... ", no_new_line=True)
-            self.run_simple_codeql_query("fetch_external_apis", self.external_apis_csv_path)
+            self.run_simple_codeql_query("fetch_external_apis")
             self.project_logger.print("Done.")
         else:
             self.project_logger.info("  ==> Existing external APIs file found. Skipping running CodeQL...")
@@ -373,7 +396,7 @@ class SAPipeline:
         # 1. Invoke CodeQL to extract the internal function parameters
         if not os.path.exists(self.func_param_path) or self.overwrite or self.overwrite_func_param_candidates:
             self.project_logger.info("  ==> Extracting all function parameters by running CodeQL... ", no_new_line=True)
-            self.run_simple_codeql_query("fetch_func_params", self.func_param_path)
+            self.run_simple_codeql_query("fetch_func_params")
             self.project_logger.print("Done.")
         else:
             self.project_logger.info("  ==> Existing function parameter file found. Skipping running CodeQL...")
@@ -459,10 +482,27 @@ class SAPipeline:
         try:
             #print("try 1", json_str)
             import re
+            
+            # Remove markdown code block markers if present
+            json_str = re.sub(r'```json\s*', '', json_str)
+            json_str = re.sub(r'```\s*$', '', json_str)
+
+            # Handle escaped single quotes which are invalid in JSON
+            json_str = json_str.replace("\\'", "'")
+
+            # Original cleanup
             json_str = json_str.replace("\\n", "").replace("\\\n", "")
             json_str = re.sub("//.*", "", json_str)
             json_str = re.sub("\"\"", "\"", json_str)
-            json_str = re.findall("\[[\s\S]*\]", json_str)[0]
+
+            
+            # Extract JSON array
+            json_match = re.findall("\[[\s\S]*\]", json_str)
+            if not json_match:
+                self.project_logger.error("Error parsing JSON: No JSON array found in response")
+                return []
+
+            json_str = json_match[0]
             #json_str = re.sub(r"\\n", "", json_str)
             result = json.loads(json_str)
             if type(result) == list:
@@ -479,7 +519,7 @@ class SAPipeline:
             except Exception as e:
                 print(e)
                 self.project_logger.error("Error parsing JSON 2")
-                self.project_logger.error(json_str)
+                self.project_logger.error(f"Problematic JSON string: {repr(json_str[:500])}")
         return []
 
     def query_gpt_for_api_src_tp_sink_batched(self):
@@ -798,12 +838,14 @@ class SAPipeline:
         return my_source_content
 
     def build_and_save_source_qll_with_enumeration(self):
+        os.makedirs(os.path.dirname(self.source_qll_path), exist_ok=True)
         with open(self.source_qll_path, "w") as f:
             f.write(self.build_source_qll_with_enumeration())
 
     def build_and_save_source_qll_with_source_node(self):
         my_source_content = QL_SOURCE_PREDICATE.format(
             body=f"sourceNode(src, \"{self.project_name}\")")
+        os.makedirs(os.path.dirname(self.source_qll_path), exist_ok=True)
         with open(self.source_qll_path, "w") as f:
             f.write(my_source_content)
 
@@ -824,6 +866,7 @@ class SAPipeline:
         return my_summary_content
 
     def build_and_save_taint_propagator_qll_with_enumeration(self):
+        os.makedirs(os.path.dirname(self.summary_qll_path), exist_ok=True)
         with open(self.summary_qll_path, "w") as f:
             f.write(self.build_taint_propagator_qll_with_enumeration())
 
@@ -879,12 +922,14 @@ class SAPipeline:
         return my_sink_content
 
     def build_and_save_sink_qll_with_enumeration(self):
+        os.makedirs(os.path.dirname(self.sink_qll_path), exist_ok=True)
         with open(self.sink_qll_path, "w") as f:
             f.write(self.build_sink_qll_with_enumeration())
 
     def build_and_save_sink_qll_with_sink_node(self):
         my_sink_content = QL_SINK_PREDICATE.format(
             body=f"sinkNode(snk, \"{self.project_name}\")")
+        os.makedirs(os.path.dirname(self.sink_qll_path), exist_ok=True)
         with open(self.sink_qll_path, "w") as f:
             f.write(my_sink_content)
 
@@ -937,6 +982,7 @@ class SAPipeline:
         return yml_content
 
     def build_and_save_extension_yml(self):
+        os.makedirs(os.path.dirname(self.spec_yml_path), exist_ok=True)
         with open(self.spec_yml_path, "w") as f:
             f.write(self.build_extension_yml())
 
@@ -975,38 +1021,45 @@ class SAPipeline:
             self.project_logger.info(f"  ==> Test run; skipping...")
             return
 
-        # Step 1: Copy all the query related
+        # Step 1: Copy static query files if needed
         self.project_logger.info("  ==> Copying custom queries...")
-        codeql_query_dir = f"{CODEQL_CUSTOM_QUERY_DIR}/{self.project_name}/{self.query}/{self.run_id}"
+        codeql_query_dir = f"{self.custom_codeql_root}/{self.query}"
         os.makedirs(codeql_query_dir, exist_ok=True)
         for q in QUERIES[self.query]["queries"]:
-            shutil.copy(f"{THIS_SCRIPT_DIR}/{q}", f"{codeql_query_dir}/")
-            self.project_logger.info(f"  ==> Copying {q}... Done!")
+            query_dest_path = f"{codeql_query_dir}/{q.split('/')[-1]}"
+            if not os.path.exists(query_dest_path):
+                shutil.copy(f"{THIS_SCRIPT_DIR}/{q}", query_dest_path)
+            self.project_logger.info(f"  ==> Query {q.split('/')[-1]} ready... Done!")
 
-        # Step 2: Copy the generated source/sink/taint-prop qll files
-        shutil.copy(self.source_qll_path, f"{codeql_query_dir}/")
-        self.project_logger.info(f"  ==> Copying source predicate ({self.source_qll_path.split('/')[-1]})... Done!")
-        shutil.copy(self.summary_qll_path, f"{codeql_query_dir}/")
-        self.project_logger.info(f"  ==> Copying summary query wrapper ({self.summary_qll_path.split('/')[-1]})... Done!")
-        shutil.copy(self.sink_qll_path, f"{codeql_query_dir}/")
-        self.project_logger.info(f"  ==> Copying sink predicate ({self.sink_qll_path.split('/')[-1]})... Done!")
-
-        # Step 3: Copy the spec yml file
-        # NOT WORKING YAML
-        self.project_logger.info(f"  ==> Copying project specific specifications ({self.spec_yml_path.split('/')[-1]})...")
-        target_yml_spec_dir = f"{CODEQL_CUSTOM_YML_DIR}/{self.project_name}"
-        os.makedirs(target_yml_spec_dir, exist_ok=True)
-        target_yml_spec_path = f"{target_yml_spec_dir}/specs.model.yml"
-        shutil.copy(self.spec_yml_path, target_yml_spec_path)
-
-        # Step 4: Run codeql analyze and produce sarif and csv
+        # Step 2: Run codeql analyze and produce sarif and csv
         self.project_logger.info("  ==> Running CodeQL analysis...")
         query_filename = QUERIES[self.query]["queries"][0].split("/")[-1]
         to_run_query_full_path = f"{codeql_query_dir}/{query_filename}"
-        sp.run([CODEQL, "database", "analyze", "--rerun", self.project_codeql_db_path, "--format=sarif-latest", f"--output={self.query_output_result_sarif_path}", to_run_query_full_path])
+
+        # Add search paths for both the built-in CodeQL packs and our custom pack
+        search_paths = [
+            f"{CODEQL_DIR}/qlpacks",  # Built-in CodeQL packs
+            self.custom_codeql_root   # Our custom qlpack root
+        ]
+        search_path_args = []
+        for path in search_paths:
+            search_path_args.extend(["--search-path", path])
+
+        # Run SARIF analysis
+        sarif_cmd = [CODEQL, "database", "analyze", "--rerun"] + search_path_args + [
+            self.project_codeql_db_path, "--format=sarif-latest", 
+            f"--output={self.query_output_result_sarif_path}", to_run_query_full_path
+        ]
+        sp.run(sarif_cmd)
         if not os.path.exists(self.query_output_result_sarif_path):
             self.project_logger.error("  ==> Result SARIF not produced; aborting"); return
-        sp.run([CODEQL, "database", "analyze", "--rerun", self.project_codeql_db_path, "--format=csv", f"--output={self.query_output_result_csv_path}", to_run_query_full_path])
+
+        # Run CSV analysis  
+        csv_cmd = [CODEQL, "database", "analyze", "--rerun"] + search_path_args + [
+            self.project_codeql_db_path, "--format=csv", 
+            f"--output={self.query_output_result_csv_path}", to_run_query_full_path
+        ]
+        sp.run(csv_cmd)
         if not os.path.exists(self.query_output_result_csv_path):
             self.project_logger.error("  ==> Result CSV not produced; aborting"); return
 

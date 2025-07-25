@@ -116,7 +116,7 @@ class CodeQLSAPipeline:
         sp.run(cmd + ["--format=csv"])
 
     def run_simple_codeql_query(self, query, target_csv_path=None, suffix=None, dyn_queries={}):
-        runner = CodeQLQueryRunner(self.project_name, self.project_output_path, self.project_codeql_db_path, self.master_logger)
+        runner = CodeQLQueryRunner(self.project_output_path, self.project_codeql_db_path, self.master_logger)
         runner.run(query, target_csv_path, suffix, dyn_queries)
 
     def extract_class_locations(self):

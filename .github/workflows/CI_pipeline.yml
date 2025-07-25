@@ -63,7 +63,7 @@ jobs:
           activate-environment: iris
           auto-update-conda: true
 
-      - name: Set up Java ${{ matrix.java_version }}
+      - name: Set up Java version ${{ matrix.java_version }}
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
@@ -165,11 +165,8 @@ jobs:
 
       - name: Relocate cached output for ${{ matrix.project_slug }}
         run: |          
-          mkdir output/${{ matrix.project_slug }}/test/analysis/${{ matrix.cwe }}
-          mv .github/cached_output/${{ matrix.project_slug }}/test/common/llm_labelled_source_func_params.json output/${{ matrix.project_slug }}/test/analysis/${{ matrix.cwe }}
-          mv .github/cached_output/${{ matrix.project_slug }}/test/cwe-022/llm_labelled_sink_apis.json output/${{ matrix.project_slug }}/test/analysis/${{ matrix.cwe }}
-          mv .github/cached_output/${{ matrix.project_slug }}/test/cwe-022/llm_labelled_source_apis.json output/${{ matrix.project_slug }}/test/analysis/${{ matrix.cwe }}
-          mv .github/cached_output/${{ matrix.project_slug }}/test/cwe-022/llm_labelled_taint_prop_apis.json output/${{ matrix.project_slug }}/test/analysis/${{ matrix.cwe }}
+          mkdir -p output/${{ matrix.project_slug }}/test/analysis/${{ matrix.cwe }}
+          mv .github/cached_output/perwendel__spark_CVE-2018-9159_2.7.1/test/* output/${{ matrix.project_slug }}/test/analysis/${{ matrix.cwe }}/
 
       - name: Build project ${{ matrix.project_slug }}
         run: |
