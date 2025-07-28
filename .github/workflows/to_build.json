@@ -5,5 +5,26 @@
     "maven_version": "3.5.0",
     "gradle_version": "",
     "cwe": "cwe-022wLLM"
+  },
+  {
+    "project_slug": "OWASP__json-sanitizer_CVE-2020-13973_1.2.0",
+    "java_version": "8",
+    "maven_version": "3.5.0",
+    "gradle_version": "",
+    "cwe": "cwe-079wLLM"
+  }, 
+  {
+    "project_slug": "jmrozanec__cron-utils_CVE-2021-41269_9.1.5",
+    "java_version": "8",
+    "maven_version": "3.5.0",
+    "gradle_version": "",
+    "cwe": "cwe-094wLLM"
+  },
+  {
+    "project_slug": "jenkinsci__docker-commons-plugin_CVE-2022-20617_1.17",
+    "java_version": "8",
+    "maven_version": "3.5.0",
+    "gradle_version": "",
+    "cwe": "cwe-078wLLM"
   }
 ]
