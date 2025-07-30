@@ -121,7 +121,7 @@ jobs:
       - name: Download and Extract CodeQL Bundle
         run: |
           # Download the CodeQL bundle
-          curl -L https://github.com/github/codeql-action/releases/download/codeql-bundle-v2.15.0/codeql-bundle-linux64.tar.gz -o codeql-bundle.tar.gz || exit 1
+          curl -L https://github.com/github/codeql-action/releases/download/codeql-bundle-v2.15.2/codeql-bundle-linux64.tar.gz -o codeql-bundle.tar.gz || exit 1
 
           # Extract the bundle
           tar -xzf codeql-bundle.tar.gz || exit 1
@@ -166,7 +166,7 @@ jobs:
       - name: Relocate cached output for ${{ matrix.project_slug }}
         run: |          
           mkdir -p output/${{ matrix.project_slug }}/test/analysis/${{ matrix.cwe }}
-          mv .github/cached_output/perwendel__spark_CVE-2018-9159_2.7.1/test/* output/${{ matrix.project_slug }}/test/analysis/${{ matrix.cwe }}/
+          mv .github/cached_output/${{ matrix.project_slug }}/* output/${{ matrix.project_slug }}/test/analysis/${{ matrix.cwe }}/
 
       - name: Build project ${{ matrix.project_slug }}
         run: |
