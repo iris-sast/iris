@@ -143,7 +143,7 @@ jobs:
 
           case "$CURRENT_JAVA_VERSION" in
             "8")
-              JAVA_HOME_TO_USE="/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/8.0.452-9/x64"
+              JAVA_HOME_TO_USE="/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/8.0.462-8/x64"
               ;;
             "11")
               JAVA_HOME_TO_USE="/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/11.0.23-9/x64"
