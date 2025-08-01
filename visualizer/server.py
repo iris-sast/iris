@@ -84,9 +84,11 @@ if not CONFIG:
         "api": {"base_url": "http://localhost:8000/api"}
     }
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 class IRISVisualizerHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, directory=os.getcwd(), **kwargs)
+        server_root = os.path.dirname(os.path.abspath(__file__))
+        super().__init__(*args, directory=server_root, **kwargs)
     
     def do_GET(self):
         """Handle GET requests"""
@@ -123,7 +125,7 @@ class IRISVisualizerHandler(http.server.SimpleHTTPRequestHandler):
         
         # Read and send file content
         try:
-            file_path = os.path.join(os.getcwd(), path.lstrip('/'))
+            file_path = os.path.join(BASE_DIR, path.lstrip('/'))
             if os.path.exists(file_path):
                 with open(file_path, 'rb') as f:
                     self.wfile.write(f.read())
