@@ -25,6 +25,24 @@ At a high level, this dataset contains 213 CVEs spanning 49 CWEs. Some examples 
 
 ![cwe-bench graphic](docs/assets/dataset-collection.png)
 
+The table below summarizes the number of CVEs in our dataset grouped by CWE category, with smaller categories (fewer than 5 CVEs) grouped together for compactness.
+
+| CWE-ID | CVE Count |
+|--------|-----------|
+| CWE-22 | 60 |
+| CWE-79 | 38 |
+| CWE-94 | 23 |
+| CWE-78 | 13 |
+| CWE-502 | 7 |
+| CWE-611 | 6 |
+| CWE-200 | 5 |
+| CWE-287 | 5 |
+| CWE-400 | 5 |
+
+| Other CWEs (< 5 CVEs each) | Details |
+|-----------------------------|---------|
+| Count: 36 | CWE-113 (1), CWE-116 (1), CWE-1325 (1), CWE-1333 (2), CWE-164 (1), CWE-178 (1), CWE-190 (1), CWE-20 (2), CWE-23 (1), CWE-264 (1), CWE-267 (1), CWE-269 (1), CWE-276 (1), CWE-284 (3), CWE-285 (1), CWE-288 (2), CWE-290 (1), CWE-297 (1), CWE-312 (1), CWE-327 (1), CWE-346 (1), CWE-352 (1), CWE-407 (1), CWE-426 (1), CWE-44 (1), CWE-522 (1), CWE-532 (3), CWE-668 (1), CWE-770 (3), CWE-83 (1), CWE-835 (2), CWE-862 (3), CWE-863 (2), CWE-89 (2), CWE-913 (1), CWE-918 (2) |
+
 ## 🚀 Set Up
 ### Using Docker (Recommended)
 ```bash
