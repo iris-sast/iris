@@ -10,6 +10,7 @@
 ⚠️ Code and data for the [ICLR 2025 Paper](https://arxiv.org/pdf/2405.17238) can be found in the v1 branch, license and citation below.
 
 ## 📰 News
+* **[Aug. 30, 2025]**: Updated CWE-Bench-Java with 93 new CVEs and 38 CWEs.
 * **[Jul. 10, 2025]**: IRIS v2 released, added support for 7 new CWEs.
 
 ## 👋 Overview
@@ -38,10 +39,7 @@ The table below summarizes the number of CVEs in our dataset grouped by CWE cate
 | CWE-200 | 5 |
 | CWE-287 | 5 |
 | CWE-400 | 5 |
-
-| Other CWEs (< 5 CVEs each) | Details |
-|-----------------------------|---------|
-| Count: 36 | CWE-113 (1), CWE-116 (1), CWE-1325 (1), CWE-1333 (2), CWE-164 (1), CWE-178 (1), CWE-190 (1), CWE-20 (2), CWE-23 (1), CWE-264 (1), CWE-267 (1), CWE-269 (1), CWE-276 (1), CWE-284 (3), CWE-285 (1), CWE-288 (2), CWE-290 (1), CWE-297 (1), CWE-312 (1), CWE-327 (1), CWE-346 (1), CWE-352 (1), CWE-407 (1), CWE-426 (1), CWE-44 (1), CWE-522 (1), CWE-532 (3), CWE-668 (1), CWE-770 (3), CWE-83 (1), CWE-835 (2), CWE-862 (3), CWE-863 (2), CWE-89 (2), CWE-913 (1), CWE-918 (2) |
+| Other CWEs (36 total) | 51 | 
 
 ## 🚀 Set Up
 ### Using Docker (Recommended)
