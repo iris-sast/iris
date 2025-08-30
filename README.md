@@ -21,7 +21,7 @@ At a high level, IRIS takes a project and a CWE (vulnerability class, such as pa
 
 ### CWE-Bench-Java
 This repository also contains the dataset CWE-Bench-Java, presented in the paper [LLM-Assisted Static Analysis for Detecting Security Vulnerabilities](https://arxiv.org/abs/2405.17238).
-At a high level, this dataset contains 208 CVEs spanning 46 CWEs. Some examples include path-traversal, OS-command injection, cross-site scripting, and code-injection. Each CVE includes the buggy and fixed source code of the project, along with the information of the fixed files and functions. We provide the seed information in this repository, and we provide scripts for fetching, patching, and building the repositories. The dataset collection process is illustrated in the figure below:
+At a high level, this dataset contains 213 CVEs spanning 49 CWEs. Some examples include path-traversal, OS-command injection, cross-site scripting, and code-injection. Each CVE includes the buggy and fixed source code of the project, along with the information of the fixed files and functions. We provide the seed information in this repository, and we provide scripts for fetching, patching, and building the repositories. The dataset collection process is illustrated in the figure below:
 
 ![cwe-bench graphic](docs/assets/dataset-collection.png)
 
