@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y \
     apt-transport-https \
     ca-certificates \
     lsb-release \
+    docker.io \
     && rm -rf /var/lib/apt/lists/*
 
 # Add OpenJDK repository and install OpenJDK versions

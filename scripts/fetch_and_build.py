@@ -16,26 +16,35 @@ from src.config import DATA_DIR
 
 def fetch_and_build_one(payload):
     """Fetch and optionally build a single project."""
-    (project, no_build, try_all, jdk, mvn, gradle, gradlew) = payload
+    (project, no_build, try_all, jdk, mvn, gradle, gradlew, use_container, verbose) = payload
     project_slug = project[1]
     
     print(f"== Processing {project_slug} ==")
     
     # Fetch the project
     print(f"== Fetching {project_slug} ==")
-    fetch_cmd = ["python3", f"{ROOT_DIR}/scripts/fetch_one.py", project_slug]
-    result = subprocess.run(fetch_cmd, capture_output=True, text=True)
+    fetch_cmd = ["python3", f"{ROOT_DIR}/scripts/fetch_one.py", project_slug]   
+    if use_container:
+        fetch_cmd.append("--from-container")
+    if verbose:
+        fetch_cmd.append("--verbose")
+    
+    if verbose:
+        result = subprocess.run(fetch_cmd)
+    else:
+        result = subprocess.run(fetch_cmd, capture_output=True, text=True)
     
     if result.returncode != 0:
         print(f"Failed to fetch {project_slug}")
-        print("----- STDOUT -----")
-        print(result.stdout)
-        print("----- STDERR -----")
-        print(result.stderr)
+        if not verbose:
+            print("----- STDOUT -----")
+            print(result.stdout)
+            print("----- STDERR -----")
+            print(result.stderr)
         return False
     
     print(f"== Done fetching {project_slug} ==")
-    if no_build:
+    if no_build or use_container:
         return True
     
     # Build the project
@@ -59,20 +68,24 @@ def fetch_and_build_one(payload):
         build_cmd.append("--gradlew")
         print(f"== Building {project_slug} with gradlew ==")
     
-    result = subprocess.run(build_cmd, capture_output=True, text=True)
+    if verbose:
+        result = subprocess.run(build_cmd)
+    else:
+        result = subprocess.run(build_cmd, capture_output=True, text=True)
     
     if result.returncode != 0:
         print(f"Failed to build {project_slug}")
-        print("----- STDOUT -----")
-        print(result.stdout)
-        print("----- STDERR -----")
-        print(result.stderr)
+        if not verbose:
+            print("----- STDOUT -----")
+            print(result.stdout)
+            print("----- STDERR -----")
+            print(result.stderr)
         return False
     
     print(f"== Done fetching and building {project_slug} ==")
     return True
 
-def parallel_fetch_and_build(projects, no_build, try_all, jdk, mvn, gradle, gradlew):
+def parallel_fetch_and_build(projects, no_build, try_all, jdk, mvn, gradle, gradlew, use_container, verbose):
     """Process multiple projects in parallel."""
     results = []
     failed_projects = []
@@ -80,7 +93,7 @@ def parallel_fetch_and_build(projects, no_build, try_all, jdk, mvn, gradle, grad
     with ThreadPoolExecutor() as executor:
         # Submit tasks for each project
         future_to_project = {
-            executor.submit(fetch_and_build_one, (project, no_build, try_all, jdk, mvn, gradle, gradlew)): project 
+            executor.submit(fetch_and_build_one, (project, no_build, try_all, jdk, mvn, gradle, gradlew, use_container, verbose)): project 
             for project in projects
         }
 
@@ -129,6 +142,10 @@ Examples:
                        help="Only fetch projects, don't build them")
     parser.add_argument("--try_all", action="store_true",
                        help="Try all build configurations for each project")
+    parser.add_argument("--use-container", action="store_true",
+                       help="Fetch projects from prebuilt Docker images and skip local build")
+    parser.add_argument("--verbose", action="store_true",
+                       help="Stream verbose output from subprocesses")
     
     # Build configuration arguments
     parser.add_argument("--jdk", type=str, 
@@ -154,7 +171,7 @@ Examples:
     
     # Create necessary directories
     try:
-        if not args.no_build:
+        if not args.no_build and not args.use_container:
             subprocess.run(["mkdir", "-p", f"{DATA_DIR}/build-info"], check=True)
         subprocess.run(["mkdir", "-p", f"{DATA_DIR}/project-sources"], check=True)
     except subprocess.CalledProcessError as e:
@@ -184,7 +201,7 @@ Examples:
     # Process projects
     results = parallel_fetch_and_build(
         projects, args.no_build, args.try_all, 
-        args.jdk, args.mvn, args.gradle, args.gradlew
+        args.jdk, args.mvn, args.gradle, args.gradlew, args.use_container, args.verbose
     )
     
     return 0 if all(results) else 1

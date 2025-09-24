@@ -103,6 +103,18 @@ install_gradle() {
   echo "✅ Installed Gradle $version at $GRADLE_DIR/gradle-${version}"
 }
 
+install_docker() {
+  echo "🐳 Installing Docker (docker.io)..."
+  sudo apt-get update -y
+  sudo apt-get install -y docker.io
+  if command -v docker >/dev/null 2>&1; then
+    echo "✅ Docker installed: $(docker --version)"
+  else
+    echo "❌ Docker installation failed"
+    return 1
+  fi
+}
+
 # ---- Usage ----
 usage() {
   cat <<EOF
@@ -110,6 +122,7 @@ Usage:
   $0 jdk [8|11|17]...    (Install one or more JDKs)
   $0 maven [3.2.1|3.5.0|3.9.8]...
   $0 gradle [6.8.2|7.6.4|8.9]...
+  $0 docker              (Install Docker CLI/Engine)
 
 Examples:
   $0 jdk 8 11 17
@@ -143,6 +156,10 @@ case "$tool" in
     for v in "$@"; do
       install_gradle "$v"
     done
+    ;;
+  
+  docker)
+    install_docker
     ;;
   *)
     usage

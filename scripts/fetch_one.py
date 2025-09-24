@@ -27,8 +27,61 @@ sys.path.append(str(ROOT_DIR))
 from src.config import DATA_DIR
 
 
-def fetch_project(project_slug):
-    """Fetch a single project from the repository."""
+def fetch_project(project_slug, from_container=False, verbose=False):
+    """Fetch a single project either from Github (default) or from a prebuilt container image."""
+    target_dir = Path(DATA_DIR) / "project-sources" / project_slug
+
+    # Check if project already exists
+    if target_dir.exists():
+        print(f"[fetch_one] Skipping: {target_dir} already exists")
+        return True
+
+    if from_container:
+        image = f"irissast/cwe-bench-java-containers:{project_slug}"
+        print(f"[fetch_one] Pulling container image {image}...")
+        try:
+            if verbose:
+                subprocess.run(["docker", "pull", image], check=True)
+            else:
+                subprocess.run(["docker", "pull", image], check=True, capture_output=True, text=True)
+        except subprocess.CalledProcessError:
+            print(f"[fetch_one] Failed to pull image")
+            return False
+
+        print(f"[fetch_one] Creating temporary container from {image}...")
+        try:
+            # Some images (e.g., scratch final stage) have no CMD/ENTRYPOINT, causing
+            # `docker create <image>` to fail with "no command specified". Provide a
+            # dummy command so the container can be created for docker cp.
+            container_id = subprocess.check_output(["docker", "create", image, "ignored"], text=True).strip()
+        except subprocess.CalledProcessError as e:
+            print(f"[fetch_one] Failed to create container: {e}")
+            return False
+
+        try:
+            target_dir.parent.mkdir(parents=True, exist_ok=True)
+            print(f"[fetch_one] Copying /repo from container {container_id} to {target_dir}...")
+            if verbose:
+                subprocess.run(["docker", "cp", f"{container_id}:/repo", str(target_dir)], check=True)
+            else:
+                subprocess.run(["docker", "cp", f"{container_id}:/repo", str(target_dir)], check=True, capture_output=True, text=True)
+        except subprocess.CalledProcessError:
+            print(f"[fetch_one] Failed to copy /repo from container")
+            try:
+                subprocess.run(["docker", "rm", "-f", container_id], check=False, capture_output=not verbose, text=not verbose)
+            except Exception:
+                pass
+            return False
+        finally:
+            try:
+                subprocess.run(["docker", "rm", "-f", container_id], check=False, capture_output=not verbose, text=not verbose)
+            except Exception:
+                pass
+
+        print(f"[fetch_one] Successfully fetched {project_slug} from container image")
+        return True
+
+    # Default: fetch from Github
     project_info_path = Path(DATA_DIR) / "project_info.csv"
     row = None
 
@@ -52,12 +105,6 @@ def fetch_project(project_slug):
         return False
 
     repo_url, commit_id = row[8], row[10]
-    target_dir = Path(DATA_DIR) / "project-sources" / project_slug
-
-    # Check if project already exists
-    if target_dir.exists():
-        print(f"[fetch_one] Skipping: {target_dir} already exists")
-        return True
 
     # Clone repository
     print(f"[fetch_one] Cloning repository from {repo_url}...")
@@ -120,10 +167,22 @@ Examples:
         type=str, 
         help="Project slug (e.g., apache__camel_CVE-2018-8041_2.20.3)"
     )
+
+
+    parser.add_argument(
+        "--from-container",
+        action="store_true",
+        help="Fetch project from prebuilt Docker image instead of Github"
+    )
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Stream verbose output from subprocesses"
+    )
     
     args = parser.parse_args()
     
-    success = fetch_project(args.project_slug)
+    success = fetch_project(args.project_slug, from_container=args.from_container, verbose=args.verbose)
     return 0 if success else 1
 
 
