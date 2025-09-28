@@ -139,6 +139,7 @@ python src/iris.py --query cwe-022wLLM --run-id test --llm qwen2.5-coder-7b perw
 ```
 
 This will build the project, generate the CodeQL database, and analyze it for CWE-022 vulnerabilities using the specified LLM (qwen2.5-coder-7b). The output of these three steps will be stored under `data/build-info/`, `data/codeql-dbs/`, and `output/` respectively.
+Additionally, you can download an image from CWE-Bench-Java from our [Docker Hub](https://hub.docker.com/r/irissast/cwe-bench-java-containers), and use the ```--use-container" flag to run IRIS from a Docker container. You can use this flag with other Docker images as well.
 
 ## 💫 Contributions
 We welcome any contributions, pull requests, or issues!
