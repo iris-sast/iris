@@ -6,30 +6,28 @@ private import semmle.code.java.dataflow.TaintTracking
 private import MyXxeQuery
 import MySources 
 import MySinks
+import MySummaries
 
 /**
  * A taint-tracking configuration for unvalidated remote user input that is used in XML external entity expansion.
  */
 module MyXxeConfig implements DataFlow::ConfigSig {
-  predicate isSource(DataFlow::Node src) {
+  predicate isSource(DataFlow::Node source) {
      //src instanceof ThreatModelFlowSource
-     isGPTDetectedSourceMethod(source.asExpr().(MethodCall).getMethod()) 
-    }
+     isGPTDetectedSource(source)
+  }
 
   predicate isSink(DataFlow::Node sink) { 
     //sink instanceof XxeSink 
-    isGPTDetectedSinkMethodCall(sink.asExpr().(Call)) or
- 
-    // an argument to a method call
-    isGPTDetectedSinkArgument(sink.asExpr().(Argument))
-}
+    isGPTDetectedSink(sink)
+  }
 
   predicate isBarrier(DataFlow::Node sanitizer) { 
     sanitizer instanceof XxeSanitizer 
-}
+  }
 
   predicate isAdditionalFlowStep(DataFlow::Node n1, DataFlow::Node n2) {
-    any(XxeAdditionalTaintStep s).step(n1, n2)
+    isGPTDetectedStep(n1, n2)
   }
 }
 
