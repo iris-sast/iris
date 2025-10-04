@@ -133,7 +133,9 @@ POSTHOC_FILTER_HINTS = {
     "918": "Server-Side Request Forgery occurs when untrusted input controls the target of an outgoing HTTP or other protocol request. Watch for user input flowing into URL constructors, HTTP client execute/connect methods, or SSRF-related libraries without validation.",
     "502": "Be cautious of calls to deserialization methods like `readObject()` or `deserialize()` when passed data from untrusted sources. Attackers may craft malicious object graphs or gadget chains to trigger unexpected behavior or even remote code execution. Check if class allowlisting or validation is in place. Avoid deserializing directly from network input or unvalidated byte arrays.",
     "807": "Pay special attention to cases where user-controlled input is directly used in permission checks (e.g., permission strings or resource identifiers). Focus on whether permission checks (such as Subject.isPermitted or similar APIs) rely on tainted or untrusted data, which may allow privilege escalation or unauthorized access.",
-    "352": "Check if the JSONP callback parameter is validated or restricted. Unchecked callback parameters may allow attackers to inject arbitrary JavaScript, leading to CSRF or data theft."
+    "352": "Check if the JSONP callback parameter is validated or restricted. Unchecked callback parameters may allow attackers to inject arbitrary JavaScript, leading to CSRF or data theft.",
+    "611": "Check if a default entity resolver is enabled, and if there is a Document Type Definition (DTD). The DTD may include arbitrary HTTP requests that the server may execute. Be careful with deserialization of XML-derived objects.",
+    "295": "If certificate pinning is being used, ensure that all relevant properties of the certificate are fully validated before the certificate is pinned, including the hostname. Always verify the full certificate chain."
 }
 
 SNIPPET_CONTEXT_SIZE = 4
