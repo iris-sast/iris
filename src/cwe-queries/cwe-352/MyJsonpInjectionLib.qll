@@ -35,10 +35,12 @@ class JsonpBuilderExpr extends AddExpr {
 
 /** A data flow configuration tracing flow from threat model sources to jsonp function name. */
 module MyThreatModelFlowConfig implements DataFlow::ConfigSig {
-  predicate isSource(DataFlow::Node src) { isGPTDetectedSource(src) }
+  predicate isSource(DataFlow::Node source) { 
+    isGPTDetectedSource(source) 
+  }
 
   predicate isSink(DataFlow::Node sink) {
-    exists(JsonpBuilderExpr jhe | jhe.getFunctionName() = sink.asExpr())
+    isGPTDetectedSink(sink)
   }
 }
 
@@ -46,7 +48,9 @@ module MyThreatModelFlow = DataFlow::Global<MyThreatModelFlowConfig>;
 
 /** A data flow configuration tracing flow from json data into the argument `json` of JSONP-like string `someFunctionName + "(" + json + ")"`. */
 module JsonDataFlowConfig implements DataFlow::ConfigSig {
-  predicate isSource(DataFlow::Node src) { src instanceof JsonStringSource }
+  predicate isSource(DataFlow::Node source) { 
+    isGPTDetectedSource(source)  
+  }
 
   predicate isSink(DataFlow::Node sink) {
     exists(JsonpBuilderExpr jhe | jhe.getJsonExpr() = sink.asExpr())
@@ -57,15 +61,13 @@ module JsonDataFlow = DataFlow::Global<JsonDataFlowConfig>;
 
 /** Taint-tracking configuration tracing flow from probable jsonp data with a user-controlled function name to an outgoing HTTP entity. */
 module MyJsonpInjectionFlowConfig implements DataFlow::ConfigSig {
-  predicate isSource(DataFlow::Node src) {
-    exists(JsonpBuilderExpr jhe |
-      jhe = src.asExpr() and
-      JsonDataFlow::flowTo(DataFlow::exprNode(jhe.getJsonExpr())) and
-      MyThreatModelFlow::flowTo(DataFlow::exprNode(jhe.getFunctionName()))
-    )
+  predicate isSource(DataFlow::Node source) { 
+    isGPTDetectedSource(source)
   }
 
-  predicate isSink(DataFlow::Node sink) { sink instanceof XssSink }
+  predicate isSink(DataFlow::Node sink) { 
+    isGPTDetectedSink(sink) 
+  }
 }
 
 module MyJsonpInjectionFlow = TaintTracking::Global<MyJsonpInjectionFlowConfig>;
@@ -77,7 +79,7 @@ module MyRequestResponseFlowConfig implements DataFlow::ConfigSig {
   }
 
   predicate isSink(DataFlow::Node sink) {
-    sink instanceof XssSink and isGPTDetectedSink(sink)
+    isGPTDetectedSink(sink)
   }
 
   predicate isAdditionalFlowStep(DataFlow::Node n1, DataFlow::Node n2) {
