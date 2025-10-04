@@ -5,6 +5,8 @@ import semmle.code.java.dataflow.FlowSources
 import MyInsecureTrustManager
 import MySources
 import MySinks
+import MySummaries
+
 
 /**
  * A configuration to model the flow of an insecure `TrustManager`
@@ -13,15 +15,17 @@ import MySinks
 module MyInsecureTrustManagerConfig implements DataFlow::ConfigSig {
   predicate isSource(DataFlow::Node source) { 
     //source instanceof InsecureTrustManagerSource 
-    isGPTDetectedSourceMethod(source.asExpr().(MethodCall).getMethod())
-}
+    isGPTDetectedSource(source)
+  }
 
   predicate isSink(DataFlow::Node sink) { 
     //sink instanceof InsecureTrustManagerSink 
-    (isGPTDetectedSinkMethodCall(sink.asExpr().(Call)) or
-    isGPTDetectedSinkArgument(sink.asExpr().(Argument)) )
-    and not isGuardedByInsecureFlag(this)
-}
+    isGPTDetectedSink(sink)
+  }
+
+  predicate isAdditionalFlowStep(DataFlow::Node n1, DataFlow::Node n2) {
+    isGPTDetectedStep(n1, n2)
+  }
 
   predicate allowImplicitRead(DataFlow::Node node, DataFlow::ContentSet c) {
     (isSink(node) or isAdditionalFlowStep(node, _)) and
