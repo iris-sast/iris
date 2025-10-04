@@ -635,7 +635,7 @@ CWE-807 refers that the product uses a protection mechanism that relies on the e
   "queries": [
     "cwe-queries/cwe-352/cwe-352wLLM.ql",
     "cwe-queries/cwe-352/MyJsonpInjectionLib.qll",
-"cwe-queries/cwe-352/MyJsonStringLib.qll",
+    "cwe-queries/cwe-352/MyJsonStringLib.qll",
   ],
   "prompts": {
     "cwe_id": "CWE-352",
@@ -672,7 +672,83 @@ Sources typically include untrusted HTTP request parameters (such as 'callback')
     ]
   }
 },
-
+"cwe-611wLLM": {
+    "name": "cwe-611wLLM",
+    "type": "cwe-query",
+    "cwe_id": "611",
+    "cwe_id_short": "611",
+    "cwe_id_tag": "CWE-611",
+    "desc": "Improper Restriction of XML External Entity Reference",
+    "queries": [
+      "cwe-queries/cwe-611/XXE.ql",
+      "cwe-queries/cwe-611/MyXxeRemoteQuery.qll",
+      "cwe-queries/cwe-611/MyXxeQuery.qll",
+      "cwe-queries/cwe-611/MyXxe.qll"
+    ],
+    "prompts": {
+      "cwe_id": "CWE-611",
+      "desc": "Improper Restriction of XML External Entity Reference",
+      "long_desc": """\
+        XML documents optionally contain a Document Type Definition (DTD), which, among other features, enables the definition of XML entities. It is possible to define an entity by providing a substitution string in the form of a URI. The XML parser can access the contents of this URI and embed these contents back into the XML document for further processing. \
+By submitting an XML file that defines an external entity with a file:// URI, an attacker can cause the processing application to read the contents of a local file. For example, a URI such as "file:///c:/winnt/win.ini" designates (in Windows) the file C:\Winnt\win.ini, or file:///etc/passwd designates the password file in Unix-based systems. Using URIs with other schemes such as http://, the attacker can force the application to make outgoing requests to servers that the attacker cannot reach directly, which can be used to bypass firewall restrictions or hide the source of attacks such as port scanning.\
+Once the content of the URI is read, it is fed back into the application that is processing the XML. This application may echo back the data (e.g. in an error message), thereby exposing the file contents.""",
+      "examples": [ 
+        {
+          "package": "javax.xml.transform",
+          "class": "DefaultDDFFileValidator",
+          "method": "validate",
+          "signature": "void validate(Source xmlToValidate)",
+          "sink_args": [],
+          "type": "source"
+        },
+        {
+          "package": "java.xml.parsers.DocumentBuilderFactory",
+          "class": "DOMWalker",
+          "method": "",
+          "signature": "Object readObject()",
+          "sink_args": [],
+          "type": "sink"
+        }, 
+      ]
+    }
+  },
+  "cwe-295wLLM": {
+    "name": "cwe-295wLLM",
+    "type": "cwe-query",
+    "cwe_id": "295",
+    "cwe_id_short": "295",
+    "cwe_id_tag": "CWE-295",
+    "desc": "Improper Certificate Validation",
+    "queries": [
+      "cwe-queries/cwe-295/InsecureTrustManager.ql",
+      "cwe-queries/cwe-295/MyInsecureTrustManager.qll",
+      "cwe-queries/cwe-295/MyInsecureTrustManagerQuery.qll",
+    ],
+    "prompts": {
+      "cwe_id": "CWE-295",
+      "desc": "Improper Certificate Validation",
+      "long_desc": """\
+      When a certificate is invalid or malicious, it might allow an attacker to spoof a trusted entity by interfering in the communication path between the host and client. The product might connect to a malicious host while believing it is a trusted host, or the product might be deceived into accepting spoofed data that appears to originate from a trusted host.""",
+      "examples": [ 
+        {
+          "package": "org.keycloak.authentication.AuthenticationFlowContext",
+          "class": "ValidateX509CertificateUsername",
+          "method": "authenticate",
+          "signature": "void authenticate(AuthenticationFlowContext context)",
+          "sink_args": [],
+          "type": "source"
+        },
+        {
+          "package": "com.tigervnc.rfb",
+          "class": "CSecurityTLS",
+          "method": "checkServerTrusted",
+          "signature": "checkServerTrusted(X509Certificate[] chain, String authType)",
+          "sink_args": ["chain", "authType"],
+          "type": "sink"
+        }, 
+      ]
+    }
+  },
 
   "fetch_external_apis": {
     "name": "fetch_external_apis",
