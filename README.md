@@ -42,6 +42,8 @@ The table below summarizes the number of CVEs in our dataset grouped by CWE cate
 | CWE-400 | 5 |
 | Other CWEs (36 total) | 51 | 
 
+Additionally, for 50 CVEs we manually extracted source and sinks for the vulnerabilities and marked them in the CodeQL format. We also provide results for LLMs ability to detect those source/sink pairs.
+
 ## 🚀 Set Up
 ### Using Docker (Recommended)
 ```bash
