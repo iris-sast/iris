@@ -81,7 +81,7 @@ sdk install maven 3.5.0
 
 #### Step 3: Configure CodeQL
 
-IRIS relies on the CodeQL Action bundle, which includes CLI utilities and pre-defined queries for various CWEs and languages ("QL packs").
+IRIS relies on the CodeQL Action bundle, which includes CLI utilities and pre-defined queries for various CWEs and languages ("QL packs"). We suggest using CodeQL version 2.23.2.
 
 If you already have CodeQL installed, specify its location via the `CODEQL_DIR` environment variable in `src/config.py`. Otherwise, download an appropriate version of the CodeQL Action bundle from the [CodeQL Action releases page](https://github.com/github/codeql-action/releases).
 
@@ -90,8 +90,8 @@ If you already have CodeQL installed, specify its location via the `CODEQL_DIR` 
   - `codeql-bundle-osx64.tar.gz` for macOS
   - `codeql-bundle-linux64.tar.gz` for Linux
 
-- **For a specific version (e.g., 2.15.0):**
-  Go to the [CodeQL Action releases page](https://github.com/github/codeql-action/releases), find the release tagged `codeql-bundle-v2.15.0`, and download the appropriate bundle for your platform.
+- **For a specific version (e.g., 2.23.2):**
+  Go to the [CodeQL Action releases page](https://github.com/github/codeql-action/releases), find the release tagged `codeql-bundle-v2.23.2`, and download the appropriate bundle for your platform.
 
 After downloading, extract the archive in the project root directory:
 
@@ -106,6 +106,8 @@ Lastly, add the path of this executable to your `PATH` environment variable:
 ```sh
 export PATH="$PWD/codeql:$PATH"
 ```
+
+**Note:** Also adjust the environment variable `CODEQL_QUERY_VERSION` in `src/config.py` according to the instructions therein. For instance, for CodeQL v2.23.2, this should be `1.8.1`.
 
 ### Visualizer
 
