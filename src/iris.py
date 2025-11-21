@@ -1033,6 +1033,15 @@ dependencies:
 
         # Step 2: Run codeql analyze and produce sarif and csv
         self.project_logger.info("  ==> Running CodeQL analysis...")
+
+        # Ensure CodeQL packs are installed for the custom 'iris' pack
+        try:
+            sp.run([CODEQL, "pack", "install"], cwd=self.custom_codeql_root, check=False)
+        except Exception as e:
+            self.project_logger.error(f"  ==> Failed during 'codeql pack install': {e}; aborting"); return
+        lock_file_path = f"{self.custom_codeql_root}/codeql-pack.lock.yml"
+        if not os.path.exists(lock_file_path):
+            self.project_logger.error("  ==> Failed to install CodeQL packs (missing codeql-pack.lock.yml); aborting"); return
         query_filename = QUERIES[self.query]["queries"][0].split("/")[-1]
         to_run_query_full_path = f"{codeql_query_dir}/{query_filename}"
 
