@@ -37,7 +37,7 @@ module MyXssFlow = TaintTracking::Global<MyXssConfig>;
 
 module MyXssConfigSinksOnly implements DataFlow::ConfigSig {
   predicate isSource(DataFlow::Node source) {
-    source instanceof ThreatModelFlowSource
+    source instanceof ActiveThreatModelSource
   }
 
   predicate isSink(DataFlow::Node sink) {
