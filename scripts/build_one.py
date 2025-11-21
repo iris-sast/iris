@@ -115,7 +115,10 @@ def get_build_info_from_csv(project_slug, csv_path):
                     if row['gradle_version'] != 'n/a':
                         specific_attempt['gradle'] = row['gradle_version']
                     if row['use_gradlew'] != 'n/a':
-                        specific_attempt['gradlew'] = int(row['use_gradlew'])
+                        if row['use_gradlew'] == "True":
+                            specific_attempt['gradlew'] = 1
+                        else:
+                            specific_attempt['gradlew'] = 0
 
                     # Check if we have a JDK and a build tool configuration
                     if 'jdk' in specific_attempt and any(key in specific_attempt for key in ['mvn', 'gradle', 'gradlew']):
