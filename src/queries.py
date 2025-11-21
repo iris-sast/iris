@@ -106,6 +106,7 @@ least privilege database access, and error message suppression are also importan
     "queries": [
       "cwe-queries/cwe-022/cwe-022wLLM.ql",
       "cwe-queries/cwe-022/MyTaintedPathQuery.qll",
+      "cwe-queries/cwe-022/PathCreation.qll",
     ],
     "prompts": {
       "cwe_id": "CWE-022",
