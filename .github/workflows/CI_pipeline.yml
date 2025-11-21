@@ -121,7 +121,7 @@ jobs:
       - name: Download and Extract CodeQL Bundle
         run: |
           # Download the CodeQL bundle
-          curl -L https://github.com/github/codeql-action/releases/download/codeql-bundle-v2.15.2/codeql-bundle-linux64.tar.gz -o codeql-bundle.tar.gz || exit 1
+          curl -L https://github.com/github/codeql-action/releases/download/codeql-bundle-v2.23.2/codeql-bundle-linux64.tar.gz -o codeql-bundle.tar.gz || exit 1
 
           # Extract the bundle
           tar -xzf codeql-bundle.tar.gz || exit 1
@@ -133,7 +133,7 @@ jobs:
           echo "$(pwd)/codeql" >> $GITHUB_PATH
 
       - name: Update CodeQL Query version in config
-        run: sed -i "s/^CODEQL_QUERY_VERSION = \".*\"$/CODEQL_QUERY_VERSION = \"0.8.0\"/" src/config.py
+        run: sed -i "s/^CODEQL_QUERY_VERSION = \".*\"$/CODEQL_QUERY_VERSION = \"1.8.1\"/" src/config.py
 
       - name: Update JDK Path in dep_configs.json for ${{ matrix.java_version }}
         run: |
