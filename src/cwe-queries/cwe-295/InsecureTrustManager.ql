@@ -19,5 +19,5 @@
  where MyInsecureTrustManagerFlow::flowPath(source, sink)
  select sink, source, sink, "This uses $@, which is defined in $@ and trusts any certificate.",
    source, "TrustManager",
-   source.getNode().asExpr().(ClassInstanceExpr).getConstructedType() as type, type.nestedName()
+   source.getNode().asExpr().(ClassInstanceExpr).getConstructedType() as type, type.getNestedName()
  
