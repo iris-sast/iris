@@ -49,7 +49,16 @@ class CodeQLQueryRunner:
         for dyn_query_name, content in dyn_queries.items():
             with open(f"{codeql_query_dir}/{dyn_query_name}", "w") as f:
                 f.write(content)
-
+                
+        pack_root = f"{self.project_output_path}/myqueries"
+        try:
+            sp.run([CODEQL, "pack", "install"], cwd=pack_root, check=False)
+        except Exception as e:
+            self.project_logger.error(f"  ==> Failed during 'codeql pack install': {e}; aborting"); exit(1)
+        lock_file_path = f"{pack_root}/codeql-pack.lock.yml"
+        if not os.path.exists(lock_file_path):
+            self.project_logger.error("  ==> Failed to install CodeQL packs (missing codeql-pack.lock.yml); aborting"); exit(1)
+            
         # 4. Setup the paths
         main_query = QUERIES[query]["queries"][0]
         main_query_name = main_query.split("/")[-1]
