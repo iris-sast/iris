@@ -35,7 +35,7 @@ module MyExecUserFlow = TaintTracking::Global<MyExecUserFlowConfig>;
 module MyExecUserFlowConfigSinksOnly implements DataFlow::ConfigSig {
   //predicate isSource(DataFlow::Node source) { source instanceof Source }
   predicate isSource(DataFlow::Node src) {
-    src instanceof ThreatModelFlowSource
+    src instanceof ActiveThreatModelSource
   }
 
   predicate isSink(DataFlow::Node sink) {
