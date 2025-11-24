@@ -13,3 +13,6 @@ dependencies:
   - transformers
   - pytorch=2.5
   - google-generativeai
+  - pip
+  - pip:
+    - docker

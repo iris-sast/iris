@@ -171,13 +171,13 @@ jobs:
       - name: Build project ${{ matrix.project_slug }}
         run: |
           echo "--- Building ${{ matrix.project_slug }} ---"
-          python scripts/fetch_and_build.py --filter ${{ matrix.project_slug }}
+          conda run -n iris python scripts/fetch_and_build.py --filter ${{ matrix.project_slug }}
           echo "--------------------------------"
 
       - name: Generate CodeQL database for ${{ matrix.project_slug }}
         run: |
           echo "--- Generating CodeQL database for ${{ matrix.project_slug }} ---"
-          python scripts/build_codeql_dbs.py --project ${{ matrix.project_slug }}
+          conda run -n iris python scripts/build_codeql_dbs.py --project ${{ matrix.project_slug }}
           echo "----------------------------------"
 
       - name: Run IRIS for ${{ matrix.project_slug }} with CWE ${{ matrix.cwe }}

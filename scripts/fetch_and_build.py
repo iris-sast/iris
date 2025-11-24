@@ -23,7 +23,7 @@ def fetch_and_build_one(payload):
     
     # Fetch the project
     print(f"== Fetching {project_slug} ==")
-    fetch_cmd = ["python3", f"{ROOT_DIR}/scripts/fetch_one.py", project_slug]   
+    fetch_cmd = ["python3", f"{ROOT_DIR}/scripts/fetch_one.py", project_slug]
     if use_container:
         fetch_cmd.append("--from-container")
     if verbose:
@@ -44,7 +44,7 @@ def fetch_and_build_one(payload):
         return False
     
     print(f"== Done fetching {project_slug} ==")
-    if no_build or use_container:
+    if no_build:
         return True
     
     # Build the project
@@ -67,6 +67,8 @@ def fetch_and_build_one(payload):
     if gradlew:
         build_cmd.append("--gradlew")
         print(f"== Building {project_slug} with gradlew ==")
+    if use_container:
+        build_cmd.append("--use-container")
     
     if verbose:
         result = subprocess.run(build_cmd)
@@ -133,6 +135,7 @@ Examples:
   python3 scripts/fetch_and_build.py --filter apache               # Process only Apache projects
   python3 scripts/fetch_and_build.py --cwe CWE-022 CWE-078         # Process specific CWE types
   python3 scripts/fetch_and_build.py --exclude testng              # Exclude specific projects
+  python3 scripts/fetch_and_build.py --cve CVE-2021-29425          # Process a specific CVE ID
   python3 scripts/fetch_and_build.py --jdk 11 --mvn 3.9.8          # Use specific JDK and Maven versions
         """
     )
@@ -164,6 +167,8 @@ Examples:
                        help="Exclude projects containing these strings")
     parser.add_argument("--cwe", nargs="+", type=str,
                        help="Only process projects with these CWE IDs")
+    parser.add_argument("--cve", nargs="+", type=str,
+                       help="Only process projects with these CVE IDs")
     parser.add_argument("--force", action="store_true",
                        help="Force processing even if projects already exist")
     
@@ -213,10 +218,15 @@ def filter_projects(projects, args):
     
     for project in projects:
         project_slug = project[1]
+        project_cve_id = project[2]
         project_cwe_id = project[3]
         
         # Check CWE filter
         if args.cwe and not any(cwe == project_cwe_id for cwe in args.cwe):
+            continue
+        
+        # Check CVE filter
+        if args.cve and not any(cve == project_cve_id for cve in args.cve):
             continue
         
         # Check inclusion filter
