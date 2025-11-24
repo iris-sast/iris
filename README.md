@@ -10,6 +10,8 @@
 ⚠️ Code and data for the [ICLR 2025 Paper](https://arxiv.org/pdf/2405.17238) can be found in the v1 branch, license and citation below.
 
 ## 📰 News
+* **[Nov. 24, 2025]**: Updated queries to version 1.8.1 to work with CodeQL 2.23.2.
+* **[Nov. 24, 2025]**: Updated the Docker integration in the main IRIS pipeline so that the container images include the project dependencies. The updated images can be found in [IRIS Docker Hub](https://hub.docker.com/r/irissast/cwe-bench-java-containers-v2).
 * **[Sep. 24, 2025]**: Added Docker integration for the main IRIS pipeline, released images for 189 CWE-Bench-Java CVEs on the [IRIS Docker Hub](https://hub.docker.com/r/irissast/cwe-bench-java-containers).
 * **[Aug. 30, 2025]**: Updated CWE-Bench-Java with 93 new CVEs and 38 CWEs.
 * **[Jul. 10, 2025]**: IRIS v2 released, added support for 7 new CWEs.
