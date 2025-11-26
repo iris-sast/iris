@@ -11,7 +11,7 @@
 
 ## 📰 News
 * **[Nov. 24, 2025]**: Updated queries to version 1.8.1 to work with CodeQL 2.23.2.
-* **[Nov. 24, 2025]**: Updated the Docker integration in the main IRIS pipeline so that the container images include the project dependencies. The updated images can be found in [IRIS Docker Hub](https://hub.docker.com/r/irissast/cwe-bench-java-containers-v2).
+* **[Nov. 24, 2025]**: Updated the Docker integration in the main IRIS pipeline so that the container images include the project dependencies. The updated images can be found in [IRIS Docker Hub](https://hub.docker.com/r/irissast/cwe-bench-java-containers-v2). The instructions to use the Docker integration can be found in the **Using Docker containers with IRIS** section below. 
 * **[Sep. 24, 2025]**: Added Docker integration for the main IRIS pipeline, released images for 189 CWE-Bench-Java CVEs on the [IRIS Docker Hub](https://hub.docker.com/r/irissast/cwe-bench-java-containers).
 * **[Aug. 30, 2025]**: Updated CWE-Bench-Java with 93 new CVEs and 38 CWEs.
 * **[Jul. 10, 2025]**: IRIS v2 released, added support for 7 new CWEs.
@@ -143,7 +143,29 @@ python src/iris.py --query cwe-022wLLM --run-id test --llm qwen2.5-coder-7b perw
 ```
 
 This will build the project, generate the CodeQL database, and analyze it for CWE-022 vulnerabilities using the specified LLM (qwen2.5-coder-7b). The output of these three steps will be stored under `data/build-info/`, `data/codeql-dbs/`, and `output/` respectively.
-Additionally, you can download an image from CWE-Bench-Java from our [Docker Hub](https://hub.docker.com/r/irissast/cwe-bench-java-containers), and use the ```--use-container``` flag to run IRIS from a Docker container. You can use this flag with other Docker images as well.
+### Using Docker containers with IRIS
+
+IRIS supports using prebuilt Docker images published in [Docker Hub](https://hub.docker.com/r/irissast/cwe-bench-java-containers-v2) that have all the dependencies installed for individual Java projects. It is designed to talk to the host Docker daemon so it can work with the CWE-Bench-Java project containers. To enable this, run the container with the host Docker socket mounted and `DOCKER_HOST` set:
+
+```bash
+docker run --platform=linux/amd64 -it \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -e DOCKER_HOST=unix:///var/run/docker.sock \
+  iris:latest
+```
+
+Inside the running container you can then use the helper scripts to run the containerized pipeline end-to-end:
+
+```bash
+# 1. Fetch sources and build the project using its Docker image
+python scripts/fetch_and_build.py --filter perwendel__spark_CVE-2018-9159_2.7.1 --use-container
+
+# 2. Build a CodeQL database inside the project container
+python scripts/build_codeql_dbs.py --project perwendel__spark_CVE-2018-9159_2.7.1 --use-container
+
+# 3. Run IRIS with the CodeQL database built by the container
+python src/iris.py --query cwe-022wLLM --run-id test --llm qwen2.5-coder-7b --use-container perwendel__spark_CVE-2018-9159_2.7.1
+```
 
 ## 💫 Contributions
 We welcome any contributions, pull requests, or issues!
