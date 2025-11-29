@@ -10,6 +10,7 @@
 ⚠️ Code and data for the [ICLR 2025 Paper](https://arxiv.org/pdf/2405.17238) can be found in the v1 branch, license and citation below.
 
 ## 📰 News
+* **[Nov. 29, 2025]**: Added a dataset with manually extracted source and sinks for the vulnerabilities in CodeQL format for 50 CVEs.
 * **[Sep. 24, 2025]**: Added Docker integration for the main IRIS pipeline, released images for 189 CWE-Bench-Java CVEs on the [IRIS Docker Hub](https://hub.docker.com/r/irissast/cwe-bench-java-containers).
 * **[Aug. 30, 2025]**: Updated CWE-Bench-Java with 93 new CVEs and 38 CWEs.
 * **[Jul. 10, 2025]**: IRIS v2 released, added support for 7 new CWEs.
@@ -42,7 +43,9 @@ The table below summarizes the number of CVEs in our dataset grouped by CWE cate
 | CWE-400 | 5 |
 | Other CWEs (36 total) | 51 | 
 
-Additionally, for 50 CVEs we manually extracted source and sinks for the vulnerabilities and marked them in the CodeQL format. We also provide results for LLMs ability to detect those source/sink pairs.
+## Manually Curated Source/Sink Annotations
+
+For 50 CVEs we manually extracted source and sinks for the vulnerabilities and marked them in the CodeQL format. We also provide results for LLMs ability to detect those source/sink pairs. We collected the associated CodeQL-style descriptors and metadata, including file paths, signatures, and line ranges, and stored them in a CSV file.
 
 ## 🚀 Set Up
 ### Using Docker (Recommended)
