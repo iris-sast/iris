@@ -1,0 +1,6 @@
+project_slug,build_cmd
+spring-projects__spring-security_CVE-2011-2732_2.0.6.RELEASE,mvn -q -B -DskipTests compile
+x-stream__xstream_CVE-2013-7285_1.4.6,mvn -q -B -DskipTests compile
+spring-security_CVE-2025-22223_6.4.3,"./gradlew --no-daemon -S -Dorg.gradle.dependency.verification=off -Dorg.gradle.warning.mode=none -Dorg.gradle.caching=false --rerun-tasks -x compileKotlin -x compileTestKotlin clean classes"
+incubator-seata_CVE-2025-32897_v2.2.0,mvn -q -B -DskipTests compile
+cassandra-lucene-index_CVE-2025-26511_cassandra-4.0.16-1.0.0,mvn clean package -B -V -e -Dfindbugs.skip -Dcheckstyle.skip -Dpmd.skip=true -Dspotbugs.skip -Denforcer.skip -Dmaven.javadoc.skip -DskipTests -Dmaven.test.skip.exec -Dlicense.skip=true -Drat.skip=true -Dspotless.check.skip=true

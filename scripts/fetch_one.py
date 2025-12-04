@@ -25,6 +25,7 @@ ROOT_DIR = THIS_SCRIPT_DIR.parent
 sys.path.append(str(ROOT_DIR))
 
 from src.config import DATA_DIR
+from scripts.docker_utils import ensure_image, parse_project_image
 
 
 def fetch_project(project_slug, from_container=False, verbose=False):
@@ -48,37 +49,17 @@ def fetch_project(project_slug, from_container=False, verbose=False):
             print(f"[fetch_one] Failed to pull image")
             return False
 
-        print(f"[fetch_one] Creating temporary container from {image}...")
+    if from_container:
+        image = parse_project_image(project_slug)
+        if verbose:
+            print(f"[fetch_one] Ensuring container image is available: {image}")
         try:
-            # Some images (e.g., scratch final stage) have no CMD/ENTRYPOINT, causing
-            # `docker create <image>` to fail with "no command specified". Provide a
-            # dummy command so the container can be created for docker cp.
-            container_id = subprocess.check_output(["docker", "create", image, "ignored"], text=True).strip()
-        except subprocess.CalledProcessError as e:
-            print(f"[fetch_one] Failed to create container: {e}")
+            ensure_image(image)
+        except Exception as e:
+            print(f"[fetch_one] Failed to pull image {image}: {e}")
             return False
-
-        try:
-            target_dir.parent.mkdir(parents=True, exist_ok=True)
-            print(f"[fetch_one] Copying /repo from container {container_id} to {target_dir}...")
-            if verbose:
-                subprocess.run(["docker", "cp", f"{container_id}:/repo", str(target_dir)], check=True)
-            else:
-                subprocess.run(["docker", "cp", f"{container_id}:/repo", str(target_dir)], check=True, capture_output=True, text=True)
-        except subprocess.CalledProcessError:
-            print(f"[fetch_one] Failed to copy /repo from container")
-            try:
-                subprocess.run(["docker", "rm", "-f", container_id], check=False, capture_output=not verbose, text=not verbose)
-            except Exception:
-                pass
-            return False
-        finally:
-            try:
-                subprocess.run(["docker", "rm", "-f", container_id], check=False, capture_output=not verbose, text=not verbose)
-            except Exception:
-                pass
-
-        print(f"[fetch_one] Successfully fetched {project_slug} from container image")
+        if verbose:
+            print(f"[fetch_one] Image ready: {image}")
         return True
 
     # Default: fetch from Github
@@ -167,8 +148,6 @@ Examples:
         type=str, 
         help="Project slug (e.g., apache__camel_CVE-2018-8041_2.20.3)"
     )
-
-
     parser.add_argument(
         "--from-container",
         action="store_true",

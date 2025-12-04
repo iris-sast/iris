@@ -27,6 +27,7 @@ ROOT_DIR = THIS_SCRIPT_DIR.parent
 sys.path.append(str(ROOT_DIR))
 
 from src.config import DATA_DIR, DEP_CONFIGS
+from scripts.docker_utils import create_container, ensure_image, exec_in_container, parse_project_image
 
 # Load dependency configurations
 ALLVERSIONS = json.load(open(DEP_CONFIGS))
@@ -108,14 +109,17 @@ def get_build_info_from_csv(project_slug, csv_path):
             for row in reader:
                 if row['project_slug'] == project_slug and row['status'] == 'success':
                     specific_attempt = {}
-                    if row['jdk_version'] != 'n/a':
+                    if row['jdk_version'] not in ('n/a', '', None):
                         specific_attempt['jdk'] = row['jdk_version']
-                    if row['mvn_version'] != 'n/a':
+                    if row['mvn_version'] not in ('n/a', '', None):
                         specific_attempt['mvn'] = row['mvn_version']
-                    if row['gradle_version'] != 'n/a':
+                    if row['gradle_version'] not in ('n/a', '', None):
                         specific_attempt['gradle'] = row['gradle_version']
                     if row['use_gradlew'] != 'n/a':
-                        specific_attempt['gradlew'] = int(row['use_gradlew'])
+                        if row['use_gradlew'] == "True":
+                            specific_attempt['gradlew'] = 1
+                        else:
+                            specific_attempt['gradlew'] = 0
 
                     # Check if we have a JDK and a build tool configuration
                     if 'jdk' in specific_attempt and any(key in specific_attempt for key in ['mvn', 'gradle', 'gradlew']):
@@ -369,7 +373,32 @@ def validate_and_create_custom_attempt(jdk, mvn, gradle, gradlew):
     return custom_attempt
 
 
-def build_project(project_slug, try_all=False, custom_attempt=None):
+def build_inside_container(project_slug: str, attempt: dict) -> bool:
+    image = parse_project_image(project_slug)
+    ensure_image(image)
+    container = create_container(image=image, working_dir="/workspace/repo")
+    try:
+        container.start()
+        env = {}
+        cmd: list[str]
+        if "mvn" in attempt:
+            cmd = ["bash", "-lc", "mvn -B -e -U -DskipTests clean package"]
+        elif "gradle" in attempt:
+            cmd = ["bash", "-lc", "gradle build --parallel"]
+        elif "gradlew" in attempt:
+            cmd = ["bash", "-lc", "chmod +x ./gradlew && ./gradlew --no-daemon -S -Dorg.gradle.dependency.verification=off clean"]
+        else:
+            return False
+        code, _ = exec_in_container(container, cmd, workdir="/workspace/repo", environment=env, stream=True)
+        return code == 0
+    finally:
+        try:
+            container.remove(force=True)
+        except Exception:
+            pass
+
+
+def build_project(project_slug, try_all=False, custom_attempt=None, use_container: bool = False):
     """Main function to build a project with various strategies."""
     # Handle custom attempt first
     if custom_attempt:
@@ -382,12 +411,12 @@ def build_project(project_slug, try_all=False, custom_attempt=None):
     if not try_all:
         # Try local build info first
         local_build_info = get_build_info_from_csv(project_slug, f"{DATA_DIR}/build-info/build_info_local.csv")
-        if local_build_info and try_build_with_attempt(project_slug, local_build_info, "local"):
+        if local_build_info and (try_build_with_attempt(project_slug, local_build_info, "local") if not use_container else build_inside_container(project_slug, local_build_info)):
             return True
         
         # Try global build info if local failed
         global_build_info = get_build_info_from_csv(project_slug, f"{DATA_DIR}/build_info.csv")
-        if global_build_info and try_build_with_attempt(project_slug, global_build_info, "global"):
+        if global_build_info and (try_build_with_attempt(project_slug, global_build_info, "global") if not use_container else build_inside_container(project_slug, global_build_info)):
             return True
 
     # Try all default attempts
@@ -396,7 +425,7 @@ def build_project(project_slug, try_all=False, custom_attempt=None):
            "No successful build configuration found in CSV files, trying all version combinations..."))
 
     for attempt in ATTEMPTS:
-        if try_build_with_attempt(project_slug, attempt):
+        if (try_build_with_attempt(project_slug, attempt) if not use_container else build_inside_container(project_slug, attempt)):
             return True
     
     print(f"[build_one] All build attempts failed for {project_slug}")
@@ -448,6 +477,11 @@ Examples:
         action="store_true", 
         help="Use the project's gradlew script"
     )
+    parser.add_argument(
+        "--use-container",
+        action="store_true",
+        help="Build inside the project's container image",
+    )
     
     args = parser.parse_args()
     
@@ -459,7 +493,7 @@ Examples:
             return 1
         custom_attempt = validate_and_create_custom_attempt(args.jdk, args.mvn, args.gradle, args.gradlew)
     
-    success = build_project(args.project_slug, try_all=args.try_all, custom_attempt=custom_attempt)
+    success = build_project(args.project_slug, try_all=args.try_all, custom_attempt=custom_attempt, use_container=args.use_container)
     return 0 if success else 1
 
 

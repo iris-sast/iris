@@ -45,7 +45,7 @@ module MyTaintedPathFlow = TaintTracking::Global<MyTaintedPathConfig>;
  */
 module MyTaintedPathSinksOnlyConfig implements DataFlow::ConfigSig {
   predicate isSource(DataFlow::Node source) {
-    source instanceof ThreatModelFlowSource
+    source instanceof ActiveThreatModelSource
  }
 
   predicate isSink(DataFlow::Node sink) {

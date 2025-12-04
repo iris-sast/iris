@@ -90,6 +90,7 @@ class SAPipeline:
             debug_sink: bool = False,
             test_run: bool = False,
             no_logger: bool = False,
+            use_container: bool = False,
     ):
         # Store basic information
         self.project_name = project_name
@@ -99,7 +100,7 @@ class SAPipeline:
         self.label_func_param_batch_size = label_func_param_batch_size
         self.num_threads = num_threads
         self.seed = seed
-        self.run_id = run_id
+        self.run_id = f"{run_id}-docker" if use_container else run_id
         self.no_summary_model = no_summary_model
         self.use_exhaustive_qll = use_exhaustive_qll
         self.skip_huge_project = skip_huge_project
@@ -125,6 +126,7 @@ class SAPipeline:
         self.debug_sink = debug_sink
         self.test_run = test_run
         self.no_logger = no_logger
+        self.use_container = use_container
 
         # Setup logger
         if not self.no_logger:
@@ -169,7 +171,8 @@ class SAPipeline:
         self.project_output_path = f"{OUTPUT_DIR}/{self.project_name}/{self.run_id}"
 
         # Setup codeql database path
-        self.project_codeql_db_path = f"{CODEQL_DB_PATH}/{self.project_name}"
+        db_project_name = f"{self.project_name}-docker" if self.use_container else self.project_name
+        self.project_codeql_db_path = f"{CODEQL_DB_PATH}/{db_project_name}"
         if not os.path.exists(f"{self.project_codeql_db_path}/db-java"):
             if not self.no_logger:
                 self.master_logger.info(f"Processing {self.project_name} (Query: {self.query}, Trial: {self.run_id})...")
@@ -1033,6 +1036,15 @@ dependencies:
 
         # Step 2: Run codeql analyze and produce sarif and csv
         self.project_logger.info("  ==> Running CodeQL analysis...")
+
+        # Ensure CodeQL packs are installed for the custom 'iris' pack
+        try:
+            sp.run([CODEQL, "pack", "install"], cwd=self.custom_codeql_root, check=False)
+        except Exception as e:
+            self.project_logger.error(f"  ==> Failed during 'codeql pack install': {e}; aborting"); return
+        lock_file_path = f"{self.custom_codeql_root}/codeql-pack.lock.yml"
+        if not os.path.exists(lock_file_path):
+            self.project_logger.error("  ==> Failed to install CodeQL packs (missing codeql-pack.lock.yml); aborting"); return
         query_filename = QUERIES[self.query]["queries"][0].split("/")[-1]
         to_run_query_full_path = f"{codeql_query_dir}/{query_filename}"
 
@@ -1342,6 +1354,7 @@ if __name__ == '__main__':
     parser.add_argument("--debug-source", action="store_true")
     parser.add_argument("--debug-sink", action="store_true")
     parser.add_argument("--test-run", action="store_true")
+    parser.add_argument("--use-container", action="store_true", help="Use container-built CodeQL database")
     args = parser.parse_args()
 
     # Set basic properties
@@ -1380,6 +1393,7 @@ if __name__ == '__main__':
         debug_source=args.debug_source,
         debug_sink=args.debug_sink,
         test_run=args.test_run,
+        use_container=args.use_container,
     )
 
     pipeline.run()

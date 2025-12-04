@@ -12,7 +12,7 @@
  */
 
 import java
-import semmle.code.java.security.MyUnsafeDeserializationQuery
+import MyUnsafeDeserializationQuery
 import UnsafeDeserializationFlow::PathGraph
 
 from UnsafeDeserializationFlow::PathNode source, UnsafeDeserializationFlow::PathNode sink

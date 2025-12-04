@@ -11,6 +11,8 @@
 
 ## 📰 News
 * **[Nov. 29, 2025]**: Added a dataset with manually extracted source and sinks for the vulnerabilities in CodeQL format for 50 CVEs.
+* **[Nov. 24, 2025]**: Updated queries to version 1.8.1 to work with CodeQL 2.23.2.
+* **[Nov. 24, 2025]**: Updated the Docker integration in the main IRIS pipeline so that the container images include the project dependencies. The updated images can be found in [IRIS Docker Hub](https://hub.docker.com/r/irissast/cwe-bench-java-containers-v2). The instructions to use the Docker integration can be found in the [**Using Docker containers with IRIS**](#using-docker-containers-with-iris) section below. 
 * **[Sep. 24, 2025]**: Added Docker integration for the main IRIS pipeline, released images for 189 CWE-Bench-Java CVEs on the [IRIS Docker Hub](https://hub.docker.com/r/irissast/cwe-bench-java-containers).
 * **[Aug. 30, 2025]**: Updated CWE-Bench-Java with 93 new CVEs and 38 CWEs.
 * **[Jul. 10, 2025]**: IRIS v2 released, added support for 7 new CWEs.
@@ -86,7 +88,7 @@ sdk install maven 3.5.0
 
 #### Step 3: Configure CodeQL
 
-IRIS relies on the CodeQL Action bundle, which includes CLI utilities and pre-defined queries for various CWEs and languages ("QL packs").
+IRIS relies on the CodeQL Action bundle, which includes CLI utilities and pre-defined queries for various CWEs and languages ("QL packs"). We suggest using CodeQL version 2.23.2.
 
 If you already have CodeQL installed, specify its location via the `CODEQL_DIR` environment variable in `src/config.py`. Otherwise, download an appropriate version of the CodeQL Action bundle from the [CodeQL Action releases page](https://github.com/github/codeql-action/releases).
 
@@ -95,8 +97,8 @@ If you already have CodeQL installed, specify its location via the `CODEQL_DIR` 
   - `codeql-bundle-osx64.tar.gz` for macOS
   - `codeql-bundle-linux64.tar.gz` for Linux
 
-- **For a specific version (e.g., 2.15.0):**
-  Go to the [CodeQL Action releases page](https://github.com/github/codeql-action/releases), find the release tagged `codeql-bundle-v2.15.0`, and download the appropriate bundle for your platform.
+- **For a specific version (e.g., 2.23.2):**
+  Go to the [CodeQL Action releases page](https://github.com/github/codeql-action/releases), find the release tagged `codeql-bundle-v2.23.2`, and download the appropriate bundle for your platform.
 
 After downloading, extract the archive in the project root directory:
 
@@ -111,6 +113,8 @@ Lastly, add the path of this executable to your `PATH` environment variable:
 ```sh
 export PATH="$PWD/codeql:$PATH"
 ```
+
+**Note:** Also adjust the environment variable `CODEQL_QUERY_VERSION` in `src/config.py` according to the instructions therein. For instance, for CodeQL v2.23.2, this should be `1.8.1`.
 
 ### Visualizer
 
@@ -144,7 +148,29 @@ python src/iris.py --query cwe-022wLLM --run-id test --llm qwen2.5-coder-7b perw
 ```
 
 This will build the project, generate the CodeQL database, and analyze it for CWE-022 vulnerabilities using the specified LLM (qwen2.5-coder-7b). The output of these three steps will be stored under `data/build-info/`, `data/codeql-dbs/`, and `output/` respectively.
-Additionally, you can download an image from CWE-Bench-Java from our [Docker Hub](https://hub.docker.com/r/irissast/cwe-bench-java-containers), and use the ```--use-container``` flag to run IRIS from a Docker container. You can use this flag with other Docker images as well.
+### Using Docker containers with IRIS
+
+IRIS supports using prebuilt Docker images published in [Docker Hub](https://hub.docker.com/r/irissast/cwe-bench-java-containers-v2) that have all the dependencies installed for individual Java projects. It is designed to talk to the host Docker daemon so it can work with the CWE-Bench-Java project containers. To enable this, run the container with the host Docker socket mounted and `DOCKER_HOST` set:
+
+```bash
+docker run --platform=linux/amd64 -it \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -e DOCKER_HOST=unix:///var/run/docker.sock \
+  iris:latest
+```
+
+Inside the running container you can then use the helper scripts to run the containerized pipeline end-to-end:
+
+```bash
+# 1. Fetch sources and build the project using its Docker image
+python scripts/fetch_and_build.py --filter perwendel__spark_CVE-2018-9159_2.7.1 --use-container
+
+# 2. Build a CodeQL database inside the project container
+python scripts/build_codeql_dbs.py --project perwendel__spark_CVE-2018-9159_2.7.1 --use-container
+
+# 3. Run IRIS with the CodeQL database built by the container
+python src/iris.py --query cwe-022wLLM --run-id test --llm qwen2.5-coder-7b --use-container perwendel__spark_CVE-2018-9159_2.7.1
+```
 
 ## 💫 Contributions
 We welcome any contributions, pull requests, or issues!

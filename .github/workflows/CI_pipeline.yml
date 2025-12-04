@@ -121,7 +121,7 @@ jobs:
       - name: Download and Extract CodeQL Bundle
         run: |
           # Download the CodeQL bundle
-          curl -L https://github.com/github/codeql-action/releases/download/codeql-bundle-v2.15.2/codeql-bundle-linux64.tar.gz -o codeql-bundle.tar.gz || exit 1
+          curl -L https://github.com/github/codeql-action/releases/download/codeql-bundle-v2.23.2/codeql-bundle-linux64.tar.gz -o codeql-bundle.tar.gz || exit 1
 
           # Extract the bundle
           tar -xzf codeql-bundle.tar.gz || exit 1
@@ -133,7 +133,7 @@ jobs:
           echo "$(pwd)/codeql" >> $GITHUB_PATH
 
       - name: Update CodeQL Query version in config
-        run: sed -i "s/^CODEQL_QUERY_VERSION = \".*\"$/CODEQL_QUERY_VERSION = \"0.8.0\"/" src/config.py
+        run: sed -i "s/^CODEQL_QUERY_VERSION = \".*\"$/CODEQL_QUERY_VERSION = \"1.8.1\"/" src/config.py
 
       - name: Update JDK Path in dep_configs.json for ${{ matrix.java_version }}
         run: |
@@ -143,7 +143,7 @@ jobs:
 
           case "$CURRENT_JAVA_VERSION" in
             "8")
-              JAVA_HOME_TO_USE="/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/8.0.462-8/x64"
+              JAVA_HOME_TO_USE="/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/8.0.472-8/x64"
               ;;
             "11")
               JAVA_HOME_TO_USE="/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/11.0.23-9/x64"
@@ -171,13 +171,13 @@ jobs:
       - name: Build project ${{ matrix.project_slug }}
         run: |
           echo "--- Building ${{ matrix.project_slug }} ---"
-          python scripts/fetch_and_build.py --filter ${{ matrix.project_slug }}
+          conda run -n iris python scripts/fetch_and_build.py --filter ${{ matrix.project_slug }}
           echo "--------------------------------"
 
       - name: Generate CodeQL database for ${{ matrix.project_slug }}
         run: |
           echo "--- Generating CodeQL database for ${{ matrix.project_slug }} ---"
-          python scripts/build_codeql_dbs.py --project ${{ matrix.project_slug }}
+          conda run -n iris python scripts/build_codeql_dbs.py --project ${{ matrix.project_slug }}
           echo "----------------------------------"
 
       - name: Run IRIS for ${{ matrix.project_slug }} with CWE ${{ matrix.cwe }}

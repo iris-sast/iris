@@ -93,10 +93,11 @@ WORKDIR /iris
 
 # Create conda environment
 RUN conda env remove -n iris || true && \
-    conda env create -f environment.yml
+    conda env create -f environment.yml && \
+    conda clean -afy
 
 # Download and extract CodeQL directly into /iris/
-RUN curl -L -o codeql.zip https://github.com/iris-sast/iris/releases/download/codeql-0.8.3-patched/codeql.zip && \
+RUN curl -L -o codeql.zip https://github.com/github/codeql-cli-binaries/releases/download/v2.23.2/codeql.zip && \
     unzip -qo codeql.zip -d /iris/ && \
     rm -f codeql.zip
 

@@ -16,7 +16,7 @@ import MySummaries
  */
 module MySpelInjectionConfig implements DataFlow::ConfigSig {
   predicate isSource(DataFlow::Node source) {
-    //source instanceof ThreatModelFlowSource
+    //source instanceof ActiveThreatModelSource
     isGPTDetectedSource(source)
   }
 
@@ -37,7 +37,7 @@ module MySpelInjectionFlow = TaintTracking::Global<MySpelInjectionConfig>;
 
 module MySpelInjectionConfigSinksOnly implements DataFlow::ConfigSig {
   predicate isSource(DataFlow::Node source) {
-    source instanceof ThreatModelFlowSource
+    source instanceof ActiveThreatModelSource
   }
 
   predicate isSink(DataFlow::Node sink) {
@@ -55,7 +55,7 @@ module MySpelInjectionFlowSinksOnly = TaintTracking::Global<MySpelInjectionConfi
 
 module MySpelInjectionConfigSourcesOnly implements DataFlow::ConfigSig {
   predicate isSource(DataFlow::Node source) {
-    //source instanceof ThreatModelFlowSource
+    //source instanceof ActiveThreatModelSource
     isGPTDetectedSource(source)
   }
 
