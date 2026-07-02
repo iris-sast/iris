@@ -10,6 +10,7 @@
 ⚠️ Code and data for the [ICLR 2025 Paper](https://arxiv.org/pdf/2405.17238) can be found in the v1 branch, license and citation below.
 
 ## 📰 News
+* **[Jun. 23, 2026]**: Only the CVEs added in the previous [update](https://github.com/iris-sast/iris/commit/67061ae6ea769edcddd7286380dfd699ed516a58) to CWE-Bench-Java did not include information regarding specific methods that were altered. This missing fix information has been added. Additionally, guidelines for future contributions to the benchmark have been established at [```contributing_cwe_bench_java.md```](data/contributing_cwe_bench_java.md).
 * **[Nov. 29, 2025]**: Added a dataset with manually extracted source and sinks for the vulnerabilities in CodeQL format for 50 CVEs.
 * **[Nov. 24, 2025]**: Updated queries to version 1.8.1 to work with CodeQL 2.23.2.
 * **[Nov. 24, 2025]**: Updated the Docker integration in the main IRIS pipeline so that the container images include the project dependencies. The updated images can be found in [IRIS Docker Hub](https://hub.docker.com/r/irissast/cwe-bench-java-containers-v2). The instructions to use the Docker integration can be found in the [**Using Docker containers with IRIS**](#using-docker-containers-with-iris) section below. 
