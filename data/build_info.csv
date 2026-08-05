@@ -212,3 +212,15 @@ snowflake-jdbc_CVE-2025-24789_v3.21.1,success,8,3.9.11,,False
 oic-auth-plugin_CVE-2025-24399_4.452.v2849b_d3945fa_,success,17,3.9.11,,False
 cxf_CVE-2025-23184_cxf-3.5.9,success,17,3.8.1,,False
 jte_CVE-2025-23026_3.1.15,success,17,3.9.5,,False
+shopizer-ecommerce__shopizer_CHANAKYA-IDOR-001_6a4a0a6,success,11,3.6.0,,False
+shopizer-ecommerce__shopizer_CHANAKYA-IDOR-002_6a4a0a6,success,11,3.6.0,,False
+SelimHorri__ecommerce-microservice-backend-app_CHANAKYA-IDOR-003_695a6d4,success,11,3.6.0,,False
+SelimHorri__ecommerce-microservice-backend-app_CHANAKYA-IDOR-004_695a6d4,success,11,3.6.0,,False
+SelimHorri__ecommerce-microservice-backend-app_CHANAKYA-IDOR-005_695a6d4,success,11,3.6.0,,False
+SelimHorri__ecommerce-microservice-backend-app_CHANAKYA-IDOR-006_695a6d4,success,11,3.6.0,,False
+SelimHorri__ecommerce-microservice-backend-app_CHANAKYA-IDOR-007_695a6d4,success,11,3.6.0,,False
+SelimHorri__ecommerce-microservice-backend-app_CHANAKYA-IDOR-008_695a6d4,success,11,3.6.0,,False
+SelimHorri__ecommerce-microservice-backend-app_CHANAKYA-IDOR-009_695a6d4,success,11,3.6.0,,False
+SelimHorri__ecommerce-microservice-backend-app_CHANAKYA-IDOR-010_695a6d4,success,11,3.6.0,,False
+SelimHorri__ecommerce-microservice-backend-app_CHANAKYA-IDOR-011_695a6d4,success,11,3.6.0,,False
+SelimHorri__ecommerce-microservice-backend-app_CHANAKYA-IDOR-012_695a6d4,success,11,3.6.0,,False
