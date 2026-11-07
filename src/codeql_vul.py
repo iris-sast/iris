@@ -104,16 +104,15 @@ class CodeQLSAPipeline:
             "database",
             "analyze",
             self.project_codeql_db_path,
-            f"--output={self.query_output_result_sarif_path}",
             f"{CODEQL_DIR}/qlpacks/codeql/java-queries/{CODEQL_QUERY_VERSION}/{exp}Security/CWE/CWE-{self.cwe_id}/"
         ]
 
         if self.overwrite:
             cmd += ["--rerun"]
 
-        sp.run(cmd + ["--format=sarif-latest"])
+        sp.run(cmd + ["--format=sarif-latest", f"--output={self.query_output_result_sarif_path}"])
 
-        sp.run(cmd + ["--format=csv"])
+        sp.run(cmd + ["--format=csv", f"--output={self.query_output_result_csv_path}"])
 
     def run_simple_codeql_query(self, query, target_csv_path=None, suffix=None, dyn_queries={}):
         runner = CodeQLQueryRunner(self.project_output_path, self.project_codeql_db_path, self.master_logger)
